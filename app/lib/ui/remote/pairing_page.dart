@@ -27,7 +27,10 @@ import 'host_key_dialog.dart' show activateHost;
 
 /// The live camera that reports the text of a QR code. Tests swap in a
 /// stand-in (there is no camera there).
-typedef PairingScannerBuilder = Widget Function(BuildContext context, ValueChanged<String> onCode);
+typedef PairingScannerBuilder = Widget Function(
+  BuildContext context,
+  ValueChanged<String> onCode,
+);
 
 final pairingScannerProvider = Provider<PairingScannerBuilder>(
   (ref) =>
@@ -36,16 +39,25 @@ final pairingScannerProvider = Provider<PairingScannerBuilder>(
 
 /// Whether the current Remote Server pairs by scanning (the entry shows only
 /// then).
-final relayPairingSupportProvider = FutureProvider.autoDispose<bool>((ref) async {
+final relayPairingSupportProvider = FutureProvider.autoDispose<bool>((
+  ref,
+) async {
   final backend = ref.watch(relayBackendProvider);
   if (!backend.available || backend is! RelayPairingBackend) return false;
-  return (backend as RelayPairingBackend).supportsPairing();
+  try {
+    return await (backend as RelayPairingBackend).supportsPairing();
+  } on Object {
+    // 探测失败（弱网、Server 暂时 5xx）不要把入口藏掉：配对页会重新探测并给出
+    // 具体错误，比「什么都没有」更容易让人知道下一步做什么。
+    return true;
+  }
 });
 
 class RemotePairingPage extends ConsumerStatefulWidget {
   const RemotePairingPage({super.key});
 
-  static Route<void> route() => MaterialPageRoute<void>(builder: (_) => const RemotePairingPage());
+  static Route<void> route() =>
+      MaterialPageRoute<void>(builder: (_) => const RemotePairingPage());
 
   @override
   ConsumerState<RemotePairingPage> createState() => _RemotePairingPageState();
@@ -86,7 +98,11 @@ class _RemotePairingPageState extends ConsumerState<RemotePairingPage> {
         await ref.read(relayAccountProvider.future);
       } catch (_) {}
       if (!mounted) return;
-      ok = await activateHost(context, ref, HostRef.relay(host.id, name: host.name));
+      ok = await activateHost(
+        context,
+        ref,
+        HostRef.relay(host.id, name: host.name),
+      );
     } catch (_) {
       ok = false;
     } finally {
@@ -110,7 +126,9 @@ class _RemotePairingPageState extends ConsumerState<RemotePairingPage> {
     // 扫码配对不要求先在手机上登录 DeepSeek：配对请求里的账号 ID 是可选的，
     // 登录只是把它一并绑定到这台手机。开源版没有理由把「没账号的手机」挡在门外。
     final Widget body = switch (flow.step) {
-      PairingStep.scanning => _ScanStep(onCode: ref.read(remotePairingProvider.notifier).scanned),
+      PairingStep.scanning => _ScanStep(
+        onCode: ref.read(remotePairingProvider.notifier).scanned,
+      ),
       PairingStep.resolving => _Busy(label: l10n.remotePairReading),
       PairingStep.confirming => _ConfirmStep(offer: flow.offer!),
       PairingStep.claiming => _Busy(label: l10n.remotePairClaiming),
@@ -119,7 +137,9 @@ class _RemotePairingPageState extends ConsumerState<RemotePairingPage> {
         hostName: flow.host?.name ?? '',
         onRetry: () => unawaited(_finish(flow.host!)),
       ),
-      PairingStep.done => _Busy(label: l10n.remotePairConnecting(flow.host?.name ?? '')),
+      PairingStep.done => _Busy(
+        label: l10n.remotePairConnecting(flow.host?.name ?? ''),
+      ),
       PairingStep.failed => _FailedStep(error: flow.error!),
     };
     return AppPage.list(
@@ -131,13 +151,18 @@ class _RemotePairingPageState extends ConsumerState<RemotePairingPage> {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
             child: Text(
               l10n.remotePairOptionalAccountHint,
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.5),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                height: 1.5,
+              ),
             ),
           ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-          child: AnimatedSwitcher(duration: const Duration(milliseconds: 220), child: body),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 220),
+            child: body,
+          ),
         ),
       ],
     );
@@ -148,11 +173,16 @@ class _RemotePairingPageState extends ConsumerState<RemotePairingPage> {
 
 String _fingerprintLines(String fingerprint) {
   final groups = formatPairingFingerprint(fingerprint).split(' ');
-  return [for (var i = 0; i < groups.length; i += 4) groups.skip(i).take(4).join(' ')].join('\n');
+  return [
+    for (var i = 0; i < groups.length; i += 4) groups.skip(i).take(4).join(' '),
+  ].join('\n');
 }
 
 class _Card extends StatelessWidget {
-  const _Card({required this.child, this.padding = const EdgeInsets.fromLTRB(18, 18, 18, 18)});
+  const _Card({
+    required this.child,
+    this.padding = const EdgeInsets.fromLTRB(18, 18, 18, 18),
+  });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -174,9 +204,14 @@ class _Busy extends StatelessWidget {
   Widget build(BuildContext context) => _Card(
     child: Row(
       children: [
-        const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2.2)),
+        const SizedBox.square(
+          dimension: 20,
+          child: CircularProgressIndicator(strokeWidth: 2.2),
+        ),
         const SizedBox(width: 14),
-        Expanded(child: Text(label, style: Theme.of(context).textTheme.bodyLarge)),
+        Expanded(
+          child: Text(label, style: Theme.of(context).textTheme.bodyLarge),
+        ),
       ],
     ),
   );
@@ -192,7 +227,9 @@ class _ScanStep extends ConsumerWidget {
     final text = data?.text?.trim() ?? '';
     if (!context.mounted) return;
     if (text.isEmpty) {
-      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.l10n.remotePairPasteEmpty)));
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(content: Text(context.l10n.remotePairPasteEmpty)),
+      );
       return;
     }
     onCode(text);
@@ -247,7 +284,9 @@ class _ConfirmStep extends ConsumerWidget {
     final theme = Theme.of(context);
     final colors = DshColors.of(context);
     final notifier = ref.read(remotePairingProvider.notifier);
-    final deepseekUserId = ref.watch(accountProvider.select((a) => a.profile?.id));
+    final deepseekUserId = ref.watch(
+      accountProvider.select((a) => a.profile?.id),
+    );
     Widget fact(String label, String value) => Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -255,10 +294,20 @@ class _ConfirmStep extends ConsumerWidget {
         children: [
           SizedBox(
             width: 64,
-            child: Text(label, style: theme.textTheme.bodyMedium?.copyWith(color: colors.textTertiary)),
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.textTertiary,
+              ),
+            ),
           ),
           Expanded(
-            child: Text(value, maxLines: 2, overflow: TextOverflow.ellipsis, style: theme.textTheme.bodyMedium),
+            child: Text(
+              value,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodyMedium,
+            ),
           ),
         ],
       ),
@@ -272,45 +321,78 @@ class _ConfirmStep extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Icon(AppIcons.computer, size: 22, color: theme.colorScheme.primary),
+                  Icon(
+                    AppIcons.computer,
+                    size: 22,
+                    color: theme.colorScheme.primary,
+                  ),
                   const SizedBox(width: 10),
-                  Expanded(child: Text(l10n.remotePairConfirmTitle, style: theme.textTheme.titleMedium)),
+                  Expanded(
+                    child: Text(
+                      l10n.remotePairConfirmTitle,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 14),
-              fact(l10n.remotePairComputer, offer.hostName.isEmpty ? l10n.remoteHostFallback : offer.hostName),
+              fact(
+                l10n.remotePairComputer,
+                offer.hostName.isEmpty
+                    ? l10n.remoteHostFallback
+                    : offer.hostName,
+              ),
               fact(l10n.remotePairServer, offer.server),
               const SizedBox(height: 2),
-              Text(l10n.remotePairFingerprint, style: theme.textTheme.bodyMedium?.copyWith(color: colors.textTertiary)),
+              Text(
+                l10n.remotePairFingerprint,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colors.textTertiary,
+                ),
+              ),
               const SizedBox(height: 6),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                 decoration: ShapeDecoration(
                   color: colors.codeWellBg,
-                  shape: Squircle.border(AppShape.md, side: BorderSide(color: colors.codeWellBorder, width: 0.5)),
+                  shape: Squircle.border(
+                    AppShape.md,
+                    side: BorderSide(color: colors.codeWellBorder, width: 0.5),
+                  ),
                 ),
                 child: Text(
                   // Four groups a line: the same rows the computer shows, read one by one.
                   _fingerprintLines(offer.fingerprint),
-                  style: AppType.mono(size: 13, color: colors.codeWellFg, height: 1.6),
+                  style: AppType.mono(
+                    size: 13,
+                    color: colors.codeWellFg,
+                    height: 1.6,
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
               Text(
                 l10n.remotePairFingerprintHint,
-                style: theme.textTheme.bodySmall?.copyWith(color: colors.textTertiary, height: 1.5),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colors.textTertiary,
+                  height: 1.5,
+                ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 16),
         FilledButton(
-          onPressed: () => unawaited(notifier.confirm(deepseekUserId: deepseekUserId)),
+          onPressed: () =>
+              unawaited(notifier.confirm(deepseekUserId: deepseekUserId)),
           child: Text(l10n.remotePairConfirm),
         ),
         const SizedBox(height: 4),
-        TextButton(onPressed: notifier.restart, child: Text(l10n.remotePairNotThis)),
+        TextButton(
+          onPressed: notifier.restart,
+          child: Text(l10n.remotePairNotThis),
+        ),
       ],
     );
   }
@@ -352,7 +434,8 @@ class _CodeStepState extends ConsumerState<_CodeStep> {
     final left = session.codeExpiresAt.difference(DateTime.now());
     final expired = left.isNegative && !widget.flow.approved;
     final seconds = left.isNegative ? 0 : left.inSeconds;
-    final countdown = '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
+    final countdown =
+        '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
     final digits = session.code.split('');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -361,7 +444,11 @@ class _CodeStepState extends ConsumerState<_CodeStep> {
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 18),
           child: Column(
             children: [
-              Text(l10n.remotePairCodeTitle, style: theme.textTheme.titleMedium, textAlign: TextAlign.center),
+              Text(
+                l10n.remotePairCodeTitle,
+                style: theme.textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 16),
               Semantics(
                 label: l10n.remotePairCodeSemantics(digits.join(' ')),
@@ -369,7 +456,10 @@ class _CodeStepState extends ConsumerState<_CodeStep> {
                 child: Row(
                   children: [
                     for (final (i, d) in digits.indexed) ...[
-                      if (i == 4) const SizedBox(width: 10) else if (i > 0) const SizedBox(width: 5),
+                      if (i == 4)
+                        const SizedBox(width: 10)
+                      else if (i > 0)
+                        const SizedBox(width: 5),
                       Expanded(child: _Digit(d)),
                     ],
                   ],
@@ -388,7 +478,10 @@ class _CodeStepState extends ConsumerState<_CodeStep> {
               Text(
                 l10n.remotePairOneAttempt,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall?.copyWith(color: colors.warning, height: 1.5),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colors.warning,
+                  height: 1.5,
+                ),
               ),
             ],
           ),
@@ -398,7 +491,10 @@ class _CodeStepState extends ConsumerState<_CodeStep> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (!expired) ...[
-              const SizedBox.square(dimension: 14, child: CircularProgressIndicator(strokeWidth: 2)),
+              const SizedBox.square(
+                dimension: 14,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
               const SizedBox(width: 10),
             ],
             Flexible(
@@ -408,7 +504,9 @@ class _CodeStepState extends ConsumerState<_CodeStep> {
                     : expired
                     ? l10n.remotePairCodeExpired
                     : l10n.remotePairWaiting(countdown),
-                style: theme.textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ],
@@ -416,7 +514,8 @@ class _CodeStepState extends ConsumerState<_CodeStep> {
         const SizedBox(height: 8),
         if (!widget.flow.approved)
           TextButton(
-            onPressed: () => unawaited(ref.read(remotePairingProvider.notifier).cancel()),
+            onPressed: () =>
+                unawaited(ref.read(remotePairingProvider.notifier).cancel()),
             child: Text(l10n.commonCancel),
           ),
       ],
@@ -437,7 +536,10 @@ class _Digit extends StatelessWidget {
       child: DecoratedBox(
         decoration: ShapeDecoration(
           color: colors.codeWellBg,
-          shape: Squircle.border(AppShape.md, side: BorderSide(color: colors.codeWellBorder, width: 0.5)),
+          shape: Squircle.border(
+            AppShape.md,
+            side: BorderSide(color: colors.codeWellBorder, width: 0.5),
+          ),
         ),
         child: Center(
           child: FittedBox(
@@ -445,7 +547,11 @@ class _Digit extends StatelessWidget {
               padding: const EdgeInsets.all(4),
               child: Text(
                 digit,
-                style: AppType.mono(size: 28, weight: FontWeight.w600, color: colors.codeWellFg),
+                style: AppType.mono(
+                  size: 28,
+                  weight: FontWeight.w600,
+                  color: colors.codeWellFg,
+                ),
               ),
             ),
           ),
@@ -474,11 +580,17 @@ class _SwitchFailed extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.remotePairSwitchFailedTitle(hostName), style: theme.textTheme.titleMedium),
+              Text(
+                l10n.remotePairSwitchFailedTitle(hostName),
+                style: theme.textTheme.titleMedium,
+              ),
               const SizedBox(height: 8),
               Text(
                 l10n.remotePairSwitchFailedBody,
-                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant, height: 1.5),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 1.5,
+                ),
               ),
             ],
           ),
@@ -486,7 +598,10 @@ class _SwitchFailed extends StatelessWidget {
         const SizedBox(height: 16),
         FilledButton(onPressed: onRetry, child: Text(l10n.commonRetry)),
         const SizedBox(height: 4),
-        TextButton(onPressed: () => Navigator.of(context).maybePop(), child: Text(l10n.remotePairDone)),
+        TextButton(
+          onPressed: () => Navigator.of(context).maybePop(),
+          child: Text(l10n.remotePairDone),
+        ),
       ],
     );
   }
@@ -503,7 +618,8 @@ class _FailedStep extends ConsumerWidget {
     final theme = Theme.of(context);
     final colors = DshColors.of(context);
     final notifier = ref.read(remotePairingProvider.notifier);
-    final otherServer = error.kind == RelayPairingErrorKind.otherServer && error.server != null;
+    final otherServer =
+        error.kind == RelayPairingErrorKind.otherServer && error.server != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -515,12 +631,19 @@ class _FailedStep extends ConsumerWidget {
                 children: [
                   Icon(AppIcons.warning, size: 20, color: colors.danger),
                   const SizedBox(width: 10),
-                  Expanded(child: Text(l10n.remotePairFailedTitle, style: theme.textTheme.titleMedium)),
+                  Expanded(
+                    child: Text(
+                      l10n.remotePairFailedTitle,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
               Text(
-                otherServer ? l10n.remotePairOtherServerBody(error.server!) : error.message,
+                otherServer
+                    ? l10n.remotePairOtherServerBody(error.server!)
+                    : error.message,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   height: 1.5,
@@ -536,9 +659,15 @@ class _FailedStep extends ConsumerWidget {
             child: Text(l10n.remotePairSwitchServer),
           ),
           const SizedBox(height: 4),
-          TextButton(onPressed: notifier.restart, child: Text(l10n.remotePairScanAgain)),
+          TextButton(
+            onPressed: notifier.restart,
+            child: Text(l10n.remotePairScanAgain),
+          ),
         ] else
-          FilledButton(onPressed: notifier.restart, child: Text(l10n.remotePairScanAgain)),
+          FilledButton(
+            onPressed: notifier.restart,
+            child: Text(l10n.remotePairScanAgain),
+          ),
       ],
     );
   }
@@ -569,7 +698,8 @@ class _CameraScannerState extends State<_CameraScanner> {
     // Android disables ML Kit's eager provider for OCR privacy. Both the camera
     // and photo decoder need the shared SDK before mobile_scanner uses it.
     _initialization = !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-        ? const MethodChannel('dsh/app').invokeMethod<void>('initializePairingScanner')
+        ? const MethodChannel('dsh/app')
+              .invokeMethod<void>('initializePairingScanner')
         : Future<void>.value();
   }
 
@@ -597,9 +727,14 @@ class _CameraScannerState extends State<_CameraScanner> {
     final messenger = ScaffoldMessenger.maybeOf(context);
     final XFile? picked;
     try {
-      picked = await ImagePicker().pickImage(source: ImageSource.gallery, requestFullMetadata: false);
+      picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        requestFullMetadata: false,
+      );
     } catch (_) {
-      messenger?.showSnackBar(SnackBar(content: Text(l10n.remotePairImageNoCode)));
+      messenger?.showSnackBar(
+        SnackBar(content: Text(l10n.remotePairImageNoCode)),
+      );
       return;
     }
     if (picked == null || !mounted) return;
@@ -607,14 +742,23 @@ class _CameraScannerState extends State<_CameraScanner> {
     try {
       await _initialization;
       if (!mounted) return;
-      capture = await _controller.analyzeImage(picked.path, formats: const [BarcodeFormat.qrCode]);
+      capture = await _controller.analyzeImage(
+        picked.path,
+        formats: const [BarcodeFormat.qrCode],
+      );
     } catch (_) {
-      if (mounted) messenger?.showSnackBar(SnackBar(content: Text(l10n.remotePairScannerFailed)));
+      if (mounted)
+        messenger?.showSnackBar(
+          SnackBar(content: Text(l10n.remotePairScannerFailed)),
+        );
       return;
     }
     if (!mounted) return;
-    if (capture == null || capture.barcodes.every((b) => (b.rawValue ?? '').isEmpty)) {
-      messenger?.showSnackBar(SnackBar(content: Text(l10n.remotePairImageNoCode)));
+    if (capture == null ||
+        capture.barcodes.every((b) => (b.rawValue ?? '').isEmpty)) {
+      messenger?.showSnackBar(
+        SnackBar(content: Text(l10n.remotePairImageNoCode)),
+      );
       return;
     }
     _report(capture);
@@ -639,7 +783,8 @@ class _CameraScannerState extends State<_CameraScanner> {
               controller: _controller,
               onDetect: _report,
               errorBuilder: (context, error) => _CameraUnavailable(
-                message: error.errorCode == MobileScannerErrorCode.permissionDenied
+                message:
+                    error.errorCode == MobileScannerErrorCode.permissionDenied
                     ? l10n.remotePairCameraDenied
                     : l10n.remotePairCameraFailed,
               ),
@@ -657,13 +802,19 @@ class _CameraScannerState extends State<_CameraScanner> {
               customBorder: const StadiumBorder(),
               onTap: () => unawaited(_fromImage()),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(AppIcons.gallery, size: 16, color: Colors.white),
                     const SizedBox(width: 6),
-                    Text(l10n.remotePairFromImage, style: const TextStyle(color: Colors.white, fontSize: 13)),
+                    Text(
+                      l10n.remotePairFromImage,
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                    ),
                   ],
                 ),
               ),
@@ -696,8 +847,10 @@ class _CameraUnavailable extends StatelessWidget {
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium
-                    ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.5),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  height: 1.5,
+                ),
               ),
             ],
           ),
@@ -714,7 +867,11 @@ class _FramePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final side = size.shortestSide * 0.64;
-    final rect = Rect.fromCenter(center: size.center(Offset.zero), width: side, height: side);
+    final rect = Rect.fromCenter(
+      center: size.center(Offset.zero),
+      width: side,
+      height: side,
+    );
     final arm = side * 0.16;
     final paint = Paint()
       ..color = Colors.white.withValues(alpha: 0.9)
