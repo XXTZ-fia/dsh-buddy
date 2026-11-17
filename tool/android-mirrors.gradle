@@ -1,0 +1,30 @@
+settingsEvaluated { settings ->
+    if (settings.settingsDir.absolutePath.replace('\\', '/').endsWith('/flutter/packages/flutter_tools/gradle')) {
+        def repos = settings.dependencyResolutionManagement.repositories
+        repos.clear()
+        repos.maven { url = uri('https://maven.aliyun.com/repository/google') }
+        repos.maven { url = uri('https://maven.aliyun.com/repository/central') }
+        repos.google()
+        repos.mavenCentral()
+    }
+}
+gradle.beforeProject { p ->
+    if (p.rootProject.projectDir.absolutePath.replace('\\', '/').startsWith((System.getenv('DSH_ANDROID_BUILD_DIR') ?: 'D:/Android/dsh-build').replace('\\', '/') + '/')) {
+        p.buildscript.repositories.maven { url = uri('https://maven.aliyun.com/repository/google') }
+        p.buildscript.repositories.maven { url = uri('https://maven.aliyun.com/repository/central') }
+    }
+}
+gradle.beforeProject { p ->
+    if (p.rootProject.projectDir.absolutePath.replace('\\', '/').startsWith((System.getenv('DSH_ANDROID_BUILD_DIR') ?: 'D:/Android/dsh-build').replace('\\', '/') + '/')) {
+        p.repositories.configureEach { r ->
+            if (r instanceof org.gradle.api.artifacts.repositories.MavenArtifactRepository) {
+                def u = r.url.toString()
+                if (u.contains('dl.google.com') || u.contains('maven.google.com')) r.url = uri('https://maven.aliyun.com/repository/google')
+                if (u.contains('repo.maven.apache.org') || u.contains('repo1.maven.org')) r.url = uri('https://maven.aliyun.com/repository/central')
+                if (u.contains('storage.googleapis.com')) r.url = uri(u.replace('storage.googleapis.com', 'storage.flutter-io.cn'))
+                if (!u.contains('flutter') && !u.contains('storage.')) r.content { excludeGroup('io.flutter') }
+            }
+        }
+    }
+}
+

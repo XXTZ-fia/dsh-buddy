@@ -1,0 +1,18 @@
+[Unit]
+Description=Personal radar management API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=radar
+Group=radar
+WorkingDirectory=/opt/personal-assistant/radar
+EnvironmentFile=/etc/personal-assistant/radar.env
+ExecStart=/opt/personal-assistant/venv/bin/radar-api --config /etc/personal-assistant/config.yaml
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

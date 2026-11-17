@@ -1,0 +1,11 @@
+{
+  "code": 0,
+  "message": "0",
+  "data": {
+    "list": [
+      {"bvid": "BV1fixture001", "title": "开源 Agent 框架 30 分钟上手", "desc": "从安装到跑通第一个任务", "owner": {"name": "示例UP主"}, "pubdate": 1762800000, "stat": {"view": 128000}, "short_link_v2": "https://b23.tv/EXAMPLE01", "pic": "https://i0.hdslb.com/bfs/archive/fixture001.jpg"},
+      {"bvid": "BV1fixture002", "title": "具身智能仿真环境搭建记录", "desc": "本期只讲环境配置", "owner": {"name": "示例UP主"}, "pubdate": 1762801200, "stat": {"view": 64000}},
+      {"bvid": "BV1fixture003", "title": "周末做菜：三道家常菜", "desc": "与主题无关", "owner": {"name": "示例UP主"}, "pubdate": 1762802400, "stat": {"view": 12000}}
+    ]
+  }
+}

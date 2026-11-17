@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "name": "岸宝（插画）",
+  "author": "DSH-TUI",
+  "version": "1.0.0",
+  "description": "岸宝插画桌宠：原画剪纸骨架 16 动作，52x52 逻辑 5x 导出。",
+  "viewBox": {
+    "x": 0,
+    "y": 0,
+    "width": 52,
+    "height": 52
+  },
+  "states": {
+    "idle": [
+      "idle.apng"
+    ],
+    "thinking": [
+      "thinking.apng"
+    ],
+    "working": [
+      "typing.apng"
+    ],
+    "juggling": [
+      "conducting.apng"
+    ],
+    "error": [
+      "sad.apng"
+    ],
+    "attention": [
+      "happy.apng"
+    ],
+    "notification": [
+      "wave.apng"
+    ],
+    "sweeping": [
+      "compacting.apng"
+    ],
+    "carrying": [
+      "reading.apng"
+    ],
+    "sleeping": [
+      "sleeping.apng"
+    ],
+    "waking": [
+      "nod.apng"
+    ],
+    "roam": [
+      "hop.apng"
+    ]
+  },
+  "roamFlipAssets": false,
+  "workingTiers": [
+    {
+      "minSessions": 3,
+      "file": "building.apng"
+    },
+    {
+      "minSessions": 1,
+      "file": "typing.apng"
+    }
+  ],
+  "jugglingTiers": [
+    {
+      "minSessions": 1,
+      "file": "conducting.apng"
+    }
+  ],
+  "idleAnimations": [
+    {
+      "file": "idle.apng",
+      "duration": 4800
+    },
+    {
+      "file": "idle-look.apng",
+      "duration": 4800
+    },
+    {
+      "file": "idle-spout.apng",
+      "duration": 4800
+    }
+  ],
+  "timings": {
+    "minDisplay": {
+      "attention": 5200,
+      "error": 4800,
+      "sweeping": 5600,
+      "notification": 3200,
+      "carrying": 3200,
+      "working": 1000,
+      "thinking": 1000
+    },
+    "autoReturn": {
+      "attention": 5200,
+      "error": 4800,
+      "sweeping": 300000,
+      "carrying": 3200
+    },
+    "wakeDuration": 1400,
+    "mouseIdleTimeout": 20000,
+    "mouseSleepTimeout": 60000
+  },
+  "reactions": {
+    "drag": {
+      "file": "wave.apng"
+    },
+    "clickLeft": {
+      "file": "nod.apng",
+      "duration": 1400
+    },
+    "clickRight": {
+      "file": "shake.apng",
+      "duration": 1400
+    },
+    "double": {
+      "files": [
+        "nod.apng"
+      ],
+      "duration": 1400
+    }
+  }
+}

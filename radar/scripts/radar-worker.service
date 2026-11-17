@@ -1,0 +1,21 @@
+[Unit]
+Description=Personal radar scheduler and worker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=radar
+Group=radar
+WorkingDirectory=/opt/personal-assistant/radar
+EnvironmentFile=/etc/personal-assistant/radar.env
+Environment=PLAYWRIGHT_BROWSERS_PATH=/var/lib/personal-assistant/browsers
+ExecStart=/opt/personal-assistant/venv/bin/radar-worker --config /etc/personal-assistant/config.yaml
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=90
+KillMode=control-group
+UMask=0077
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

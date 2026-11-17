@@ -1,0 +1,228 @@
+{
+  "@@locale": "zh",
+  "radarTitle": "信息雷达",
+  "radarServer": "服务器 HTTPS 地址",
+  "radarToken": "访问令牌",
+  "radarConnect": "连接并刷新",
+  "radarFailure": "连接或保存失败：请检查地址与令牌；配置冲突时重新连接刷新",
+  "radarWindows": "原生 Windows（PowerShell）",
+  "radarWork": "工作",
+  "radarAutomationTab": "自动化",
+  "radarLibrary": "资料",
+  "radarMine": "我的",
+  "radarAutomation": "服务器雷达调度",
+  "radarHostSchedules": "当前岸宝主机任务",
+  "radarRuns": "采集运行记录",
+  "radarInbox": "事件收件箱",
+  "radarExperts": "专家与角色配置",
+  "radarCloudFiles": "云端资料（上传与分享）",
+  "radarProjects": "项目与工作区",
+  "radarSessionFiles": "当前任务产物",
+  "radarWorkspaceFiles": "当前任务文件",
+  "radarChooseSession": "先在工作页选择一个任务",
+  "radarName": "名称",
+  "radarInterval": "间隔分钟（至少 5）",
+  "radarUseModel": "使用服务器已配置的摘要模型",
+  "radarUpload": "上传资料（最多 20 MiB）",
+  "radarNoRecords": "暂无记录",
+  "radarRun": "立即运行",
+  "radarQueued": "已提交；请在运行记录中查看结果。",
+  "radarMore": "加载更多历史",
+  "radarAllSources": "全部来源",
+  "radarDevices": "设备访问凭据",
+  "radarEnroll": "为此手机创建可撤销凭据",
+  "radarPolling": "启用雷达通知轮询（尽力送达）",
+  "radarNewEvent": "有新的雷达事件，点击鉴权查看",
+  "radarScheduleEnabled": "启用自动化任务",
+  "radarHostMismatch": "请先添加对应 SSH 主机，并让连接名称与事件主机名称一致。",
+  "radarConnectionTitle": "连接我的服务器",
+  "radarConnectionHelp": "填写你自己部署的雷达服务地址（以 https:// 开头），再粘贴该服务器生成的访问令牌。",
+  "radarServerNote": "服务器由你自己部署；地址与令牌只保存在本机。",
+  "radarConnected": "已连接",
+  "radarNotConnected": "未连接",
+  "radarTokenExpired": "访问令牌已失效，请在雷达设置中重新连接。",
+  "radarRetry": "重试",
+  "radarDisconnect": "断开并清除凭据",
+  "radarGoConnect": "去连接",
+  "radarConnectRequired": "请先在「信息雷达」页连接服务器并填入访问令牌。",
+  "radarItemCount": "{count} 条",
+  "@radarItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarUpdatedAt": "更新于 {time}",
+  "@radarUpdatedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "radarSourceHealthy": "{healthy}/{total} 来源正常",
+  "@radarSourceHealthy": {
+    "placeholders": {
+      "healthy": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "radarAutomationHint": "雷达调度、主机任务与运行记录",
+  "radarLibraryHint": "云端资料、工作区与当前任务产物",
+  "radarServerGroup": "我的服务器",
+  "radarHostGroup": "当前岸宝主机",
+  "radarLocalGroup": "本机与工作区",
+  "radarUnfollow": "取消关注",
+  "radarHotTab": "热榜",
+  "radarDigestTab": "概览",
+  "radarFeatureGroup": "可选功能",
+  "radarFeatureSwitch": "信息雷达",
+  "radarFeatureOff": "默认关闭。开启后才会出现雷达页签、调度与收件箱入口。",
+  "radarFeatureOn": "已开启。雷达需要一个你自己部署的服务器，雷达页里有自建教程。",
+  "radarSelfHostGuide": "没有服务器？看自建教程",
+  "radarSelfHostTitle": "自建雷达服务器",
+  "radarSelfHostIntro": "信息雷达不在云端：App 只连你填的地址，内容留在你的服务器上。",
+  "radarSelfHostStep1": "1. 部署后端",
+  "radarSelfHostStep1Body": "在 Ubuntu 22.04+/24.04 上，从仓库根目录执行：\n\nsudo radar/scripts/install-server.sh\n\n脚本会创建系统服务、安装 Chromium、生成访问令牌，并在 127.0.0.1:8787 启动 API 与采集进程。",
+  "radarSelfHostStep2": "2. 配 HTTPS",
+  "radarSelfHostStep2Body": "用 Caddy 反代到 8787。证书必须签给域名：\n\nradar.example.com {\n    reverse_proxy 127.0.0.1:8787\n}\n\nApp 里填域名，不要填 IP。",
+  "radarSelfHostStep3": "3. 取令牌并连接",
+  "radarSelfHostStep3Body": "读取令牌：\n\nsudo grep RADAR_BEARER_TOKEN /etc/personal-assistant/radar.env\n\n把它粘到雷达页的「访问令牌」，地址填你的域名。",
+  "radarSelfHostDocs": "完整说明见仓库内 docs/RADAR_SELF_HOST.md",
+  "radarBriefTab": "简报",
+  "radarBriefUnit": "条简报",
+  "radarBriefUnread": "未读 {count}",
+  "@radarBriefUnread": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarBriefAllRead": "全部已读",
+  "radarBriefReadMark": "已读",
+  "radarBriefGenerated": "生成于 {time}",
+  "@radarBriefGenerated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "radarBriefCross": "另 {count} 家同报",
+  "@radarBriefCross": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarBriefWhy": "入选理由",
+  "radarBriefRefresh": "刷新",
+  "radarBriefMore": "加载更多",
+  "radarBriefEmpty": "还没有简报",
+  "radarBriefEmptyHint": "服务端会在每轮采集后把新内容整理到这里；确认「采集调度」已开启，再等一轮。",
+  "radarBriefHealthOk": "正常",
+  "radarBriefHealthStale": "缓存",
+  "radarBriefHealthOff": "未启用",
+  "radarSourcesTitle": "来源",
+  "radarSourcesSearch": "搜索来源",
+  "radarSourcesNoMatch": "没有符合条件的来源",
+  "radarSourcesAdded": "{added}/{total} 已添加",
+  "@radarSourcesAdded": {
+    "placeholders": {
+      "added": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "radarSourcesAdd": "添加来源",
+  "radarSourcesRemove": "移除来源",
+  "radarHotUnavailable": "该来源暂不可用，可稍后重试",
+  "radarHotUnavailableShort": "暂不可用",
+  "radarHotStale": "旧数据",
+  "radarHotEmpty": "还没有添加来源",
+  "radarHotEmptyHint": "点右上角「来源」，添加你常看的站点",
+  "radarHotOpenFailed": "打不开这条内容",
+  "radarConsensusTopics": "跨源共识话题",
+  "radarConsensusScanned": "扫过 {items} 条 · {sources} 个来源",
+  "@radarConsensusScanned": {
+    "placeholders": {
+      "items": {
+        "type": "int"
+      },
+      "sources": {
+        "type": "int"
+      }
+    }
+  },
+  "radarConsensusOutlets": "{count} 家共同报道",
+  "@radarConsensusOutlets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarConsensusCount": "{count} 条相关",
+  "@radarConsensusCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarConsensusRelated": "相关热榜条目",
+  "radarConsensusRefresh": "立即重算",
+  "radarConsensusRule": "规则聚合",
+  "radarConsensusModel": "AI 归纳",
+  "radarConsensusHint": "同一件事被多个不同站点同时放上热榜，才会出现在这里。",
+  "radarConsensusEmpty": "暂时没有跨源共识",
+  "radarAutoRefreshOnLaunch": "启动时刷新信息雷达",
+  "radarAutoRefreshOnLaunchNote": "关闭后，App 启动或回到前台不再自动抓取热榜，可在雷达页手动刷新",
+  "radarConsensusEmptyHint": "多勾选几个不同站点，等下一轮抓取后再来看。",
+  "radarPapersTitle": "为你推荐的论文",
+  "radarPapersTab": "论文",
+  "radarPapersNote": "按兴趣词从 Hugging Face 与 arXiv 选出",
+  "radarPapersEmpty": "暂时没有匹配的论文，下一轮会自动更新。",
+  "radarPapersLoading": "正在取论文…",
+  "radarPapersFailed": "论文暂时取不到，稍后会自动重试。",
+  "radarPapersMore": "展开摘要",
+  "radarPapersLess": "收起",
+  "radarPapersSourceHf": "HF Daily",
+  "radarPapersSourceArxiv": "arXiv",
+  "radarPapersSourceBoth": "HF + arXiv",
+  "radarPapersInterestsLabel": "兴趣",
+  "radarPapersSetInterests": "设置兴趣词",
+  "radarPapersServerOld": "服务器上的雷达还是旧版本，没有这个接口。重启 radar-api 后自动恢复。",
+  "radarPapersUnauthorized": "访问令牌被服务端拒绝了，去「个人服务器」里重新粘贴一次。",
+  "radarPapersOriginal": "原文",
+  "radarPapersTranslated": "中文",
+  "radarPaperSettingsTitle": "论文推荐",
+  "radarPaperSettingsSubtitle": "兴趣词、来源与条数都在这里改",
+  "radarPaperInterestsTitle": "兴趣词",
+  "radarPaperInterestsNote": "标题或摘要命中得越多排得越前；留空就只按认可度排。",
+  "radarPaperInterestsEmpty": "还没有兴趣词，先加几个。",
+  "radarPaperInterestHint": "例如 RAG、具身智能",
+  "radarPaperInterestAdd": "添加",
+  "radarPaperSourcesTitle": "论文来源",
+  "radarPaperSourcesNote": "至少留一个；关掉的来源不再抓取，也不会出现在列表里。",
+  "radarPaperSourceArxivNote": "没有投票，靠关键词与新鲜度",
+  "radarPaperCountTitle": "显示条数",
+  "radarPaperRankTitle": "排序规则",
+  "radarPaperRankNote": "兴趣命中 + 认可度：Hugging Face 的赞数，以及同一篇同时被 HF 与 arXiv 收录（跨源印证）。单源又没有赞的论文会排在后面。",
+  "radarPaperSave": "保存",
+  "radarPaperSaved": "已保存，返回后自动重排",
+  "radarPaperSaveFailed": "保存失败，稍后再试",
+  "radarSourcesOrderTitle": "榜单顺序",
+  "radarSourcesOrderNote": "长按拖动，决定「全部来源」里各榜单的先后。",
+  "radarSourcesNoneAdded": "还没有添加任何榜单，先在下面星标几个。"
+}

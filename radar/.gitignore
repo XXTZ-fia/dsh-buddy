@@ -1,0 +1,14 @@
+secrets/
+browser_profiles/
+outbox/
+*.db
+*.db-journal
+config.yaml
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+*.egg-info/
+build/
+dist/

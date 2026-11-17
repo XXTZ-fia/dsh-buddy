@@ -1,0 +1,52 @@
+# ---- Flutter / Dart 构建产物 ----
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.gradle/
+local.properties
+app/android/key.properties
+*.iml
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# golden 测试失败时生成的对比图（testImage / maskedDiff / masterImage），非基线
+**/failures/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---- 雷达运行时：账号登录态与私密配置，绝不入库 ----
+radar/secrets/
+radar/browser_profiles/
+radar/outbox/
+radar/config.yaml
+radar/*.db
+radar/*.db-journal
+radar/radar-dryrun/
+
+# ---- Go 宿主运行时产物 ----
+runtime/out/
+
+# ---- 金图测试用的固定字体（55 MB，可从 Windows Fonts 目录重新取）----
+tool/test-fonts/
+
+# ---- 编辑器与系统 ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 本地验证截图/临时目录
+.verify/

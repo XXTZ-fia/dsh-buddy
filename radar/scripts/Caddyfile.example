@@ -1,0 +1,4 @@
+# Replace radar.example.com with your domain. API itself binds only to loopback.
+radar.example.com {
+    reverse_proxy 127.0.0.1:8787
+}

@@ -1,0 +1,228 @@
+{
+  "@@locale": "en",
+  "radarTitle": "Information radar",
+  "radarServer": "Server HTTPS address",
+  "radarToken": "Access token",
+  "radarConnect": "Connect and refresh",
+  "radarFailure": "Connection or save failed. Check address and token; reconnect to reload conflicting settings.",
+  "radarWindows": "Native Windows (PowerShell)",
+  "radarWork": "Work",
+  "radarAutomationTab": "Automations",
+  "radarLibrary": "Library",
+  "radarMine": "Me",
+  "radarAutomation": "Server radar schedules",
+  "radarHostSchedules": "Current Anbao host tasks",
+  "radarRuns": "Collection runs",
+  "radarInbox": "Event inbox",
+  "radarExperts": "Experts and roles",
+  "radarCloudFiles": "Cloud files (upload and share)",
+  "radarProjects": "Projects and workspaces",
+  "radarSessionFiles": "Current task artifacts",
+  "radarWorkspaceFiles": "Current task files",
+  "radarChooseSession": "Select a task on the Work tab first",
+  "radarName": "Name",
+  "radarInterval": "Interval minutes (at least 5)",
+  "radarUseModel": "Use the server summary model",
+  "radarUpload": "Upload file (up to 20 MiB)",
+  "radarNoRecords": "No records yet",
+  "radarRun": "Run now",
+  "radarQueued": "Submitted; check collection runs for the result.",
+  "radarMore": "Load more history",
+  "radarAllSources": "All sources",
+  "radarDevices": "Device credentials",
+  "radarEnroll": "Create revocable credential for this phone",
+  "radarPolling": "Enable radar notification polling (best effort)",
+  "radarNewEvent": "New radar event. Open to authenticate and view.",
+  "radarScheduleEnabled": "Enable scheduled task",
+  "radarHostMismatch": "Add the matching SSH host and use the same name as the event host.",
+  "radarConnectionTitle": "Connect my server",
+  "radarConnectionHelp": "Enter the HTTPS address of your own radar server, then paste the access token it issued.",
+  "radarServerNote": "The server is yours to host; the address and token stay on this device.",
+  "radarConnected": "Connected",
+  "radarNotConnected": "Not connected",
+  "radarTokenExpired": "The access token expired. Reconnect in radar settings.",
+  "radarRetry": "Retry",
+  "radarDisconnect": "Disconnect and clear credentials",
+  "radarGoConnect": "Connect now",
+  "radarConnectRequired": "Connect the radar server and enter the access token on the Radar tab first.",
+  "radarItemCount": "{count} items",
+  "@radarItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarUpdatedAt": "Updated {time}",
+  "@radarUpdatedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "radarSourceHealthy": "{healthy}/{total} sources healthy",
+  "@radarSourceHealthy": {
+    "placeholders": {
+      "healthy": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "radarAutomationHint": "Radar schedules, host tasks and run history",
+  "radarLibraryHint": "Cloud files, workspaces and task artifacts",
+  "radarServerGroup": "My server",
+  "radarHostGroup": "Current Anbao host",
+  "radarLocalGroup": "This phone and workspaces",
+  "radarUnfollow": "Unfollow",
+  "radarHotTab": "Hot lists",
+  "radarDigestTab": "Overview",
+  "radarFeatureGroup": "Optional features",
+  "radarFeatureSwitch": "Information radar",
+  "radarFeatureOff": "Off by default. Turning it on adds the radar tab, schedules and inbox.",
+  "radarFeatureOn": "On. The radar needs a server you host; the radar page has the guide.",
+  "radarSelfHostGuide": "No server? Read the self-hosting guide",
+  "radarSelfHostTitle": "Self-host the radar",
+  "radarSelfHostIntro": "The radar is not a cloud service: the app only talks to the address you enter.",
+  "radarSelfHostStep1": "1. Deploy the backend",
+  "radarSelfHostStep1Body": "On Ubuntu 22.04+/24.04, from the repository root:/n/nsudo radar/scripts/install-server.sh\n\nThe script creates the service, installs Chromium, generates an access token and starts the API and collector on 127.0.0.1:8787.",
+  "radarSelfHostStep2": "2. Put it behind HTTPS",
+  "radarSelfHostStep2Body": "Reverse-proxy 8787 with Caddy. The certificate must be issued for a domain:/n/nradar.example.com {\n    reverse_proxy 127.0.0.1:8787\n}\n\nUse the domain in the app, not the IP.",
+  "radarSelfHostStep3": "3. Copy the token and connect",
+  "radarSelfHostStep3Body": "Read the token:/n/nsudo grep RADAR_BEARER_TOKEN /etc/personal-assistant/radar.env\n\nPaste it into Access token on the radar page, with your domain as the address.",
+  "radarSelfHostDocs": "Full guide: docs/RADAR_SELF_HOST.md (in the repo)",
+  "radarBriefTab": "Brief",
+  "radarBriefUnit": "briefs",
+  "radarBriefUnread": "{count} unread",
+  "@radarBriefUnread": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarBriefAllRead": "All read",
+  "radarBriefReadMark": "Read",
+  "radarBriefGenerated": "Generated {time}",
+  "@radarBriefGenerated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "radarBriefCross": "{count} more outlets",
+  "@radarBriefCross": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarBriefWhy": "Why",
+  "radarBriefRefresh": "Refresh",
+  "radarBriefMore": "Load more",
+  "radarBriefEmpty": "No brief yet",
+  "radarBriefEmptyHint": "The server fills this in after each collection round. Check that the schedule is enabled, then wait for the next run.",
+  "radarBriefHealthOk": "OK",
+  "radarBriefHealthStale": "Cached",
+  "radarBriefHealthOff": "Off",
+  "radarSourcesTitle": "Sources",
+  "radarSourcesSearch": "Search sources",
+  "radarSourcesNoMatch": "No matching sources",
+  "radarSourcesAdded": "{added}/{total} added",
+  "@radarSourcesAdded": {
+    "placeholders": {
+      "added": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "radarSourcesAdd": "Add source",
+  "radarSourcesRemove": "Remove source",
+  "radarHotUnavailable": "This source is unavailable right now",
+  "radarHotUnavailableShort": "Unavailable",
+  "radarHotStale": "cached",
+  "radarHotEmpty": "No sources yet",
+  "radarHotEmptyHint": "Tap Sources at the top right to add the sites you read",
+  "radarHotOpenFailed": "Could not open this item",
+  "radarConsensusTopics": "cross-source topics",
+  "radarConsensusScanned": "{items} items · {sources} sources",
+  "@radarConsensusScanned": {
+    "placeholders": {
+      "items": {
+        "type": "int"
+      },
+      "sources": {
+        "type": "int"
+      }
+    }
+  },
+  "radarConsensusOutlets": "{count} outlets",
+  "@radarConsensusOutlets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarConsensusCount": "{count} items",
+  "@radarConsensusCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "radarConsensusRelated": "Matching hot items",
+  "radarConsensusRefresh": "Recompute",
+  "radarConsensusRule": "rule-based",
+  "radarConsensusModel": "AI grouped",
+  "radarConsensusHint": "Only stories carried by several different outlets land here.",
+  "radarConsensusEmpty": "No shared stories yet",
+  "radarAutoRefreshOnLaunch": "Refresh radar on launch",
+  "radarAutoRefreshOnLaunchNote": "Off: no automatic fetch on start or resume. Use the refresh button instead.",
+  "radarConsensusEmptyHint": "Pick a few more outlets and check back after the next crawl.",
+  "radarPapersTitle": "Papers for you",
+  "radarPapersTab": "Papers",
+  "radarPapersNote": "Ranked for your interests from Hugging Face and arXiv",
+  "radarPapersEmpty": "No papers matched this round; the next one updates on its own.",
+  "radarPapersLoading": "Loading papers…",
+  "radarPapersFailed": "Papers are unavailable right now; this retries on its own.",
+  "radarPapersMore": "Show abstract",
+  "radarPapersLess": "Hide",
+  "radarPapersSourceHf": "HF Daily",
+  "radarPapersSourceArxiv": "arXiv",
+  "radarPapersSourceBoth": "HF + arXiv",
+  "radarPapersInterestsLabel": "Interests",
+  "radarPapersSetInterests": "Set interests",
+  "radarPapersServerOld": "The radar service on the server predates this endpoint. Restart radar-api and it recovers.",
+  "radarPapersUnauthorized": "The server rejected the access token. Paste it again under 个人服务器.",
+  "radarPapersOriginal": "Original",
+  "radarPapersTranslated": "Chinese",
+  "radarPaperSettingsTitle": "Paper recommendations",
+  "radarPaperSettingsSubtitle": "Interests, sources and how many to show",
+  "radarPaperInterestsTitle": "Interests",
+  "radarPaperInterestsNote": "The more title/abstract hits, the higher it ranks. Leave empty to rank by credibility only.",
+  "radarPaperInterestsEmpty": "No interests yet — add a few.",
+  "radarPaperInterestHint": "e.g. RAG, embodied AI",
+  "radarPaperInterestAdd": "Add",
+  "radarPaperSourcesTitle": "Paper sources",
+  "radarPaperSourcesNote": "Keep at least one. A disabled source is no longer fetched and never appears in the list.",
+  "radarPaperSourceArxivNote": "No votes — ranked by keywords and freshness",
+  "radarPaperCountTitle": "Items shown",
+  "radarPaperRankTitle": "How ranking works",
+  "radarPaperRankNote": "Interest hits plus credibility: Hugging Face upvotes, and the same paper appearing in both HF and arXiv (cross-source confirmation). Single-source papers without votes rank lower.",
+  "radarPaperSave": "Save",
+  "radarPaperSaved": "Saved — the list re-ranks when you go back",
+  "radarPaperSaveFailed": "Save failed, try again later",
+  "radarSourcesOrderTitle": "Board order",
+  "radarSourcesOrderNote": "Press and drag to set the order inside All sources.",
+  "radarSourcesNoneAdded": "No boards added yet — star a few below."
+}

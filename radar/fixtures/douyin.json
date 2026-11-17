@@ -1,0 +1,10 @@
+{
+  "status_code": 0,
+  "data": {
+    "word_list": [
+      {"word": "开源Agent框架发布新版本", "sentence_id": "7001", "event_time": 1762802400, "hot_value": 987654},
+      {"word": "机器人跑马拉松", "sentence_id": "7002", "event_time": 1762803600, "hot_value": 654321},
+      {"word": "今日份晚霞", "sentence_id": "7003", "event_time": 1762804800, "hot_value": 120000}
+    ]
+  }
+}
