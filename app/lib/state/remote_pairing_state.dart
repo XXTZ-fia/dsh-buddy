@@ -119,7 +119,17 @@ class PairingFlowController extends Notifier<PairingFlowState> {
     _scanned = text;
     state = const PairingFlowState(step: PairingStep.resolving);
     try {
-      final offer = await backend.resolvePairing(text);
+      RelayPairingOffer offer;
+      try {
+        offer = await backend.resolvePairing(text);
+      } on RelayPairingError catch (error) {
+        // 解析是只读的（不消耗 ticket）：弱网下一次失败不该让用户重新扫码。
+        // 只对网络错误重试一次，票过期/换服务器等仍然直接报错。
+        if (error.kind != RelayPairingErrorKind.network) rethrow;
+        await Future<void>.delayed(const Duration(milliseconds: 700));
+        if (!_current(epoch)) return;
+        offer = await backend.resolvePairing(text);
+      }
       if (!_current(epoch)) return;
       state = PairingFlowState(step: PairingStep.confirming, offer: offer);
     } catch (e) {

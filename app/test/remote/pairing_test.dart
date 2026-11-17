@@ -24,6 +24,7 @@ class _Backend extends UnavailableRelayBackend implements RelayPairingBackend {
   final resolved = <String>[];
   final claims = <String?>[];
   Object? resolveError;
+  var resolveFailures = 0;
   final phases = StreamController<RelayPairingPhase>.broadcast();
   final completed = Completer<RelayHost>();
   var cancels = 0;
@@ -41,6 +42,10 @@ class _Backend extends UnavailableRelayBackend implements RelayPairingBackend {
   @override
   Future<RelayPairingOffer> resolvePairing(String scanned) async {
     resolved.add(scanned);
+    if (resolveFailures > 0) {
+      resolveFailures--;
+      throw const RelayPairingError(RelayPairingErrorKind.network, '连不上 Remote 服务器');
+    }
     if (resolveError case final e?) throw e;
     return const RelayPairingOffer(
       server: 'https://dsh.r2049.cn',
@@ -146,6 +151,13 @@ void main() {
       expect(state().step, PairingStep.failed);
       expect(state().error!.needsNewCode, isTrue);
       expect(state().session, isNull);
+    });
+
+    test('a transient network failure while resolving is retried once', () async {
+      backend.resolveFailures = 1;
+      await flow().scanned(_code);
+      expect(backend.resolved, [_code, _code]);
+      expect(state().step, PairingStep.confirming);
     });
 
     test('scanning again gives up a shown code and tells the Server', () async {
