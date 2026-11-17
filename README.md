@@ -25,8 +25,10 @@
 ## 五分钟上手
 
 1. **装 App**：下载 Releases 里的 APK，`adb install -r app-arm64-release.apk` 或在手机上点开安装。
-2. **配电脑**：在电脑上安装 DSH 与 `ds-harness-remote` 插件，登录后打开 Remote 面板，让它显示配对二维码。
-   中继地址保持默认（`ds-harness-remote` 自带服务）即可；要用自己的中继，见[构建](#从源码构建)。
+2. **配电脑**：装好 DSH 与 `ds-harness-remote` 插件，打开 **Remote settings → Sign in → `DSH Go pairing`**
+   → Generate pairing QR code。**二维码只在「这台电脑还没登录 Remote」时出现**；已登录的主机请先
+   Sign out（会断开现有远程连接），或直接在手机端用同一账号登录、不用扫码。
+   中继保持默认（`ds-harness-remote` 自带服务）；要用自己的中继，见[构建](#从源码构建)。
 3. **扫码**：手机「我的 → 主机 → 远程主机 → 扫码配对电脑」，扫电脑上的码，确认主机指纹，
    再把手机显示的 8 位码敲回电脑。配对不要求手机先登录 DeepSeek；登录后会把账号 ID 一并绑定。
 4. **(可选) 开雷达**：设置 → 可选功能 → 信息雷达。开启后按雷达页的「自建服务器」教程部署后端，
