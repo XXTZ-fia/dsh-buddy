@@ -224,7 +224,28 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
       );
     } else {
       body = TerminalCardFrame(
-        child: TerminalScreen(sessionId: widget.sessionId, tab: selected, focusNode: _focus, modifiers: _modifiers),
+        child: Stack(
+          children: [
+            TerminalScreen(sessionId: widget.sessionId, tab: selected, focusNode: _focus, modifiers: _modifiers),
+            // PTY 建好之前这块只有黑底；给一个明确的「正在连接」，避免像卡死。
+            if (selected.phase == TerminalPhase.starting || selected.phase == TerminalPhase.connecting)
+              Positioned.fill(
+                child: ColoredBox(
+                  color: theme.colorScheme.surface.withValues(alpha: 0.92),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2)),
+                        const SizedBox(height: 12),
+                        Text(l10n.botsTerminalOpening, style: theme.textTheme.bodySmall?.copyWith(color: DshColors.of(context).textTertiary)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       );
     }
 
