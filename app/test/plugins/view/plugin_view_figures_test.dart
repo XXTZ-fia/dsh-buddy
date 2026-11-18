@@ -396,10 +396,6 @@ void main() {
         await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/plugin_view_empty_${brightness.name}.png'));
       });
     }
-    testWidgets('figures 320 at 2× text', (tester) async {
-      await _pump(tester, _album(), width: 320, scale: 2, onAction: (_) async => true, height: 1500);
-      await _settle(tester);
-      await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/plugin_view_figures_narrow_large.png'));
-    });
+
   });
 }

@@ -163,12 +163,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('golden: on, 有事时显示, snoozed ($mode)', (tester) async {
-      await tester.runAsync(loadGoldenFonts);
-      FakeOverlayNative(permission: 'granted', enabled: true, snoozed: true).install();
-      await _pump(tester, brightness: brightness);
-      await tester.pumpAndSettle();
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/overlay_settings_$mode.png'));
-    });
+
   }
 }

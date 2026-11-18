@@ -30,7 +30,7 @@ class SelfHostedLoginSheet extends ConsumerStatefulWidget {
 }
 
 class _SelfHostedLoginSheetState extends ConsumerState<SelfHostedLoginSheet> {
-  late final _server = TextEditingController(text: ref.read(relayServerProvider) ?? defaultRelayServer);
+  late final _server = TextEditingController(text: ref.read(relayServerProvider) ?? '');
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _busy = false;
@@ -83,7 +83,6 @@ class _SelfHostedLoginSheetState extends ConsumerState<SelfHostedLoginSheet> {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final colors = DshColors.of(context);
-    final custom = ref.watch(relayServerProvider);
     final navigator = Navigator.of(context);
     return AppPage.list(
       title: l10n.remoteSelfHostedServer,
@@ -165,22 +164,12 @@ class _SelfHostedLoginSheetState extends ConsumerState<SelfHostedLoginSheet> {
               TextButton(
                 onPressed: _busy
                     ? null
-                    : () => setState(() {
-                        _server.text = legacyRelayOrigin;
-                        _error = null;
-                      }),
+                    : () async {
+                        await ref.read(relayServerProvider.notifier).useDefault();
+                        navigator.maybePop();
+                      },
                 child: Text(l10n.remoteUseOfficialRelay),
               ),
-              if (custom != null)
-                TextButton(
-                  onPressed: _busy
-                      ? null
-                      : () async {
-                          await ref.read(relayServerProvider.notifier).useDefault();
-                          navigator.maybePop();
-                        },
-                  child: Text(l10n.remoteRestoreServer),
-                ),
             ],
           ),
         ),

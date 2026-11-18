@@ -8270,6 +8270,12 @@ abstract class L10n {
   /// **'上次的记录 · 正在后台同步'**
   String get viewCachedTranscript;
 
+  /// No description provided for @chatUsageLine.
+  ///
+  /// In zh, this message translates to:
+  /// **'本对话 缓存命中 {cache} · 输入 {input} · 输出 {output}'**
+  String chatUsageLine(String cache, String input, String output);
+
   /// No description provided for @commonCancel.
   ///
   /// In zh, this message translates to:
@@ -25553,85 +25559,73 @@ abstract class L10n {
   /// No description provided for @radarFeatureGroup.
   ///
   /// In zh, this message translates to:
-  /// **'可选功能'**
-  String get radarFeatureGroup;
-
-  /// No description provided for @radarFeatureSwitch.
-  ///
-  /// In zh, this message translates to:
   /// **'信息雷达'**
-  String get radarFeatureSwitch;
-
-  /// No description provided for @radarFeatureOff.
-  ///
-  /// In zh, this message translates to:
-  /// **'默认关闭。开启后才会出现雷达页签、调度与收件箱入口。'**
-  String get radarFeatureOff;
+  String get radarFeatureGroup;
 
   /// No description provided for @radarFeatureOn.
   ///
   /// In zh, this message translates to:
-  /// **'已开启。雷达需要一个你自己部署的服务器，雷达页里有自建教程。'**
+  /// **'已启用：雷达运行在你自己的服务器上。'**
   String get radarFeatureOn;
 
   /// No description provided for @radarSelfHostGuide.
   ///
   /// In zh, this message translates to:
-  /// **'没有服务器？看自建教程'**
+  /// **'没有服务器？一键配置你自己的服务器'**
   String get radarSelfHostGuide;
 
   /// No description provided for @radarSelfHostTitle.
   ///
   /// In zh, this message translates to:
-  /// **'自建雷达服务器'**
+  /// **'配置公网服务器'**
   String get radarSelfHostTitle;
 
   /// No description provided for @radarSelfHostIntro.
   ///
   /// In zh, this message translates to:
-  /// **'信息雷达不在云端：App 只连你填的地址，内容留在你的服务器上。'**
+  /// **'雷达不在云端。把本仓库放到你的公网服务器上，执行一条命令，中继与雷达会一起装好。'**
   String get radarSelfHostIntro;
 
   /// No description provided for @radarSelfHostStep1.
   ///
   /// In zh, this message translates to:
-  /// **'1. 部署后端'**
+  /// **'1. 准备服务器'**
   String get radarSelfHostStep1;
 
   /// No description provided for @radarSelfHostStep1Body.
   ///
   /// In zh, this message translates to:
-  /// **'在 Ubuntu 22.04+/24.04 上，从仓库根目录执行：\n\nsudo radar/scripts/install-server.sh\n\n脚本会创建系统服务、安装 Chromium、生成访问令牌，并在 127.0.0.1:8787 启动 API 与采集进程。'**
+  /// **'Ubuntu 22.04+/24.04，两个域名已解析到这台机器，并以 root 身份把仓库放到服务器上。'**
   String get radarSelfHostStep1Body;
 
   /// No description provided for @radarSelfHostStep2.
   ///
   /// In zh, this message translates to:
-  /// **'2. 配 HTTPS'**
+  /// **'2. 一键安装'**
   String get radarSelfHostStep2;
 
   /// No description provided for @radarSelfHostStep2Body.
   ///
   /// In zh, this message translates to:
-  /// **'用 Caddy 反代到 8787。证书必须签给域名：\n\nradar.example.com {\n    reverse_proxy 127.0.0.1:8787\n}\n\nApp 里填域名，不要填 IP。'**
+  /// **'在仓库根目录执行：\n\nsudo tool/server/install-all.sh \\\n  --relay-host dsh.example.com \\\n  --radar-host radar.example.com \\\n  --email you@example.com\n\n脚本会安装中继、雷达、systemd 服务与 HTTPS，并打印登录账号和访问令牌。'**
   String get radarSelfHostStep2Body;
 
   /// No description provided for @radarSelfHostStep3.
   ///
   /// In zh, this message translates to:
-  /// **'3. 取令牌并连接'**
+  /// **'3. 在 App 里连接'**
   String get radarSelfHostStep3;
 
   /// No description provided for @radarSelfHostStep3Body.
   ///
   /// In zh, this message translates to:
-  /// **'读取令牌：\n\nsudo grep RADAR_BEARER_TOKEN /etc/personal-assistant/radar.env\n\n把它粘到雷达页的「访问令牌」，地址填你的域名。'**
+  /// **'「我的 → 连接 → 自建服务器」填中继地址与邮箱密码；雷达页填同一台服务器的地址和脚本打印的令牌。'**
   String get radarSelfHostStep3Body;
 
   /// No description provided for @radarSelfHostDocs.
   ///
   /// In zh, this message translates to:
-  /// **'完整说明见仓库内 docs/RADAR_SELF_HOST.md'**
+  /// **'脚本说明与排错：docs/SELF_HOST.md'**
   String get radarSelfHostDocs;
 
   /// No description provided for @radarBriefTab.
@@ -26089,6 +26083,42 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'还没有添加任何榜单，先在下面星标几个。'**
   String get radarSourcesNoneAdded;
+
+  /// No description provided for @radarZhihuLoginTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录知乎'**
+  String get radarZhihuLoginTitle;
+
+  /// No description provided for @radarZhihuLoginHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'登录后，登录 Cookie 会保存在你自己的服务器上，用来读取知乎热榜。'**
+  String get radarZhihuLoginHint;
+
+  /// No description provided for @radarZhihuLoginBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'知乎对机房网络要求登录态。在手机里登录一次，之后雷达就能正常抓取知乎热榜；Cookie 只上传到你自己的服务器。'**
+  String get radarZhihuLoginBody;
+
+  /// No description provided for @radarZhihuLater.
+  ///
+  /// In zh, this message translates to:
+  /// **'以后再说'**
+  String get radarZhihuLater;
+
+  /// No description provided for @radarZhihuLoginAction.
+  ///
+  /// In zh, this message translates to:
+  /// **'去登录'**
+  String get radarZhihuLoginAction;
+
+  /// No description provided for @radarZhihuCookieFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存知乎登录状态失败：{error}'**
+  String radarZhihuCookieFailed(String error);
 
   /// No description provided for @readListUpdating.
   ///
@@ -27563,7 +27593,7 @@ abstract class L10n {
   /// No description provided for @remoteSelfHostedSignInHelp.
   ///
   /// In zh, this message translates to:
-  /// **'用邮箱和密码登录自己部署的 liguobao/ds-harness-remote'**
+  /// **'用邮箱和密码登录自己部署的中继（tool/server/install-all.sh 会打印账号）'**
   String get remoteSelfHostedSignInHelp;
 
   /// No description provided for @remoteServerAddress.
@@ -28805,7 +28835,7 @@ abstract class L10n {
   /// No description provided for @remotePersonalServerNotice.
   ///
   /// In zh, this message translates to:
-  /// **'填入你自建中继的地址，用邮箱和密码登录；这个地址连不上时，可以点下方改回官方中继。'**
+  /// **'填入你自建中继的地址，用邮箱和密码登录。连上后雷达页签会自动出现；这个地址连不上时，可以点下方改回官方中继。'**
   String get remotePersonalServerNotice;
 
   /// No description provided for @remoteUseOfficialRelay.
@@ -28855,6 +28885,102 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'这台电脑没在线：在电脑上打开 DSH，或让 remote-host 常驻，就会自动变回在线。'**
   String get remoteHostOfflineHint;
+
+  /// No description provided for @remoteKeepOnline.
+  ///
+  /// In zh, this message translates to:
+  /// **'让电脑常驻'**
+  String get remoteKeepOnline;
+
+  /// No description provided for @remoteKeepOnlineSetup.
+  ///
+  /// In zh, this message translates to:
+  /// **'安装常驻主机'**
+  String get remoteKeepOnlineSetup;
+
+  /// No description provided for @remoteKeepOnlineHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭 DSH 窗口后，手机仍能连上这台电脑。'**
+  String get remoteKeepOnlineHint;
+
+  /// No description provided for @remoteKeepOnlineIntro.
+  ///
+  /// In zh, this message translates to:
+  /// **'远程插件跑在 DSH 进程里，关掉窗口就下线。下面这段命令让它在后台常驻并在登录时自动启动，不需要一直开着 DSH。'**
+  String get remoteKeepOnlineIntro;
+
+  /// No description provided for @remoteKeepOnlineStep1.
+  ///
+  /// In zh, this message translates to:
+  /// **'1. 在电脑上打开命令行'**
+  String get remoteKeepOnlineStep1;
+
+  /// No description provided for @remoteKeepOnlineStep1Body.
+  ///
+  /// In zh, this message translates to:
+  /// **'不需要管理员权限；电脑上已安装 dsh 并登录过中继即可。'**
+  String get remoteKeepOnlineStep1Body;
+
+  /// No description provided for @remoteKeepOnlineStep2.
+  ///
+  /// In zh, this message translates to:
+  /// **'2. 粘贴并运行整段命令'**
+  String get remoteKeepOnlineStep2;
+
+  /// No description provided for @remoteKeepOnlineStep2Body.
+  ///
+  /// In zh, this message translates to:
+  /// **'第一次会把插件装进常驻 profile，约 1 分钟。装好后浏览器会自动打开配对页：点左侧 Remote → DSH Go 扫码 → 生成配对二维码，再用手机扫。没弹出就把窗口里的 127.0.0.1 地址复制到浏览器。'**
+  String get remoteKeepOnlineStep2Body;
+
+  /// No description provided for @remoteKeepOnlineStep3.
+  ///
+  /// In zh, this message translates to:
+  /// **'3. 回到这里点检测'**
+  String get remoteKeepOnlineStep3;
+
+  /// No description provided for @remoteKeepOnlineStep3Body.
+  ///
+  /// In zh, this message translates to:
+  /// **'出现同一台电脑的新主机条目后切换过去；旧条目会在关闭 DSH 后消失。'**
+  String get remoteKeepOnlineStep3Body;
+
+  /// No description provided for @remoteKeepOnlineCopy.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制命令'**
+  String get remoteKeepOnlineCopy;
+
+  /// No description provided for @remoteKeepOnlineCheck.
+  ///
+  /// In zh, this message translates to:
+  /// **'检测常驻主机'**
+  String get remoteKeepOnlineCheck;
+
+  /// No description provided for @remoteKeepOnlineChecking.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在刷新主机列表…'**
+  String get remoteKeepOnlineChecking;
+
+  /// No description provided for @remoteKeepOnlineFound.
+  ///
+  /// In zh, this message translates to:
+  /// **'检测到新的主机'**
+  String get remoteKeepOnlineFound;
+
+  /// No description provided for @remoteKeepOnlineNone.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没检测到。确认命令已跑完、电脑联网后重试。'**
+  String get remoteKeepOnlineNone;
+
+  /// No description provided for @remoteKeepOnlineSwitch.
+  ///
+  /// In zh, this message translates to:
+  /// **'切换到该主机'**
+  String get remoteKeepOnlineSwitch;
 
   /// No description provided for @remotePairEntry.
   ///

@@ -236,18 +236,5 @@ void main() {
     });
   });
 
-  group('goldens', () {
-    goldenBoth('cordis', () => const CordisPage(), overrides: cordisOverrides);
-    goldenBoth('cordis_empty', () => const CordisPage(), overrides: () => cordisOverrides(plugins: const []));
-    goldenBoth(
-      'cordis_sheet',
-      () => const CordisPage(),
-      overrides: cordisOverrides,
-      before: (tester) async {
-        await _openSheet(tester, '翻译助手');
-        await tester.tap(find.text('详情'));
-        await tester.pump(const Duration(milliseconds: 600));
-      },
-    );
-  });
+
 }

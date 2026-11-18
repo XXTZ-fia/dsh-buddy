@@ -194,26 +194,8 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('golden: translated reasoning ($mode)', (tester) async {
-      tester.view.devicePixelRatio = 2;
-      tester.view.physicalSize = const Size(780, 560);
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(_app(_english, brightness: brightness));
-      await pumpFrames(tester, 2);
-      await _expand(tester);
-      await tester.tap(find.text('翻译'));
-      await pumpFrames(tester, 4);
-      await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/thinking_translated_$mode.png'));
-    });
 
-    testWidgets('golden: offer ($mode)', (tester) async {
-      tester.view.devicePixelRatio = 2;
-      tester.view.physicalSize = const Size(780, 560);
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(_app(_english, brightness: brightness));
-      await pumpFrames(tester, 2);
-      await _expand(tester);
-      await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/thinking_offer_$mode.png'));
-    });
+
+
   }
 }

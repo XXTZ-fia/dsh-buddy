@@ -46,9 +46,9 @@ class CachedConversation {
   final DateTime savedAt;
 }
 
-/// 把「在这台手机上打开过的对话」按**机器**存下来,下次连这台机器时先显示它。
+/// 把「在这台手机上打开过的对话」按**会话**存下来,下次点哪条都能先显示它。
 ///
-/// - 每台机器只留最近一次,正文最多 [maxLines] 行;
+/// - 每台机器最多 [maxSessions] 条会话,每条正文最多 [maxLines] 行;
 /// - 打开聊天页就存(内容没变不写盘),不用等到有新消息;
 /// - 写盘去抖 1.5 s,流式输出时不会每帧写。
 class ChatCache {
@@ -56,8 +56,8 @@ class ChatCache {
 
   static const maxLines = 60;
 
-  /// 最多记几台机器,换机器换得多也不会让文件无限长。
-  static const maxHosts = 4;
+  /// 最多记几条会话,换会话换得多也不会让文件无限长。
+  static const maxSessions = 40;
 
   static const _fileName = 'conversations.json';
 
@@ -78,17 +78,35 @@ class ChatCache {
 
   static Map<String, _Entry> get _data => _entries ?? const {};
 
-  /// 这台机器上次打开过的对话;没有就 null。
-  static CachedConversation? forHost(String? hostId) {
-    if (hostId == null) return null;
-    final entry = _data[hostId];
+  static String _key(String hostId, String sessionId) => '$hostId::$sessionId';
+
+  /// 某台机器上某条会话的缓存;没有就 null。
+  static CachedConversation? forSession(String? hostId, String? sessionId) {
+    if (hostId == null || sessionId == null) return null;
+    final entry = _data[_key(hostId, sessionId)];
     if (entry == null || entry.lines.isEmpty) return null;
     return CachedConversation(
       hostId: hostId,
-      sessionId: entry.sessionId,
+      sessionId: sessionId,
       lines: entry.lines,
       savedAt: entry.savedAt,
     );
+  }
+
+  /// 这台机器上最近打开过的那条会话（兼容旧入口）。
+  static CachedConversation? forHost(String? hostId) {
+    if (hostId == null) return null;
+    _Entry? latest;
+    String? id;
+    for (final entry in _data.entries) {
+      if (!entry.key.startsWith('$hostId::')) continue;
+      if (latest == null || entry.value.savedAt.isAfter(latest.savedAt)) {
+        latest = entry.value;
+        id = entry.value.sessionId;
+      }
+    }
+    if (latest == null || latest.lines.isEmpty) return null;
+    return CachedConversation(hostId: hostId, sessionId: id!, lines: latest.lines, savedAt: latest.savedAt);
   }
 
   static Future<File> _file() async {
@@ -124,7 +142,7 @@ class ChatCache {
         final id = value['id'];
         final lines = [for (final line in (value['lines'] as List? ?? const [])) ?CachedLine.fromJson(line)];
         if (id is! String || lines.isEmpty) continue;
-        out['${entry.key}'] = _Entry(
+        out[entry.key.contains('::') ? '${entry.key}' : '${entry.key}::$id'] = _Entry(
           sessionId: id,
           lines: lines,
           savedAt: DateTime.tryParse('${value['at']}') ?? DateTime.now(),
@@ -139,9 +157,8 @@ class ChatCache {
     final lines = _extract(items);
     if (lines.isEmpty) return;
     final kept = lines.length > maxLines ? lines.sublist(lines.length - maxLines) : lines;
-    final existing = _data[hostId];
+    final existing = _data[_key(hostId, sessionId)];
     if (existing != null &&
-        existing.sessionId == sessionId &&
         existing.lines.length == kept.length &&
         existing.lines.last.text == kept.last.text) {
       return;
@@ -180,10 +197,10 @@ class ChatCache {
   static Future<void> _write(String hostId, String sessionId, List<CachedLine> lines) async {
     await ensureLoaded();
     final entries = Map<String, _Entry>.from(_data);
-    entries[hostId] = _Entry(sessionId: sessionId, lines: lines, savedAt: DateTime.now());
-    if (entries.length > maxHosts) {
+    entries[_key(hostId, sessionId)] = _Entry(sessionId: sessionId, lines: lines, savedAt: DateTime.now());
+    if (entries.length > maxSessions) {
       final oldest = entries.entries.toList()..sort((a, b) => a.value.savedAt.compareTo(b.value.savedAt));
-      for (final entry in oldest.take(entries.length - maxHosts)) {
+      for (final entry in oldest.take(entries.length - maxSessions)) {
         entries.remove(entry.key);
       }
     }
@@ -192,10 +209,11 @@ class ChatCache {
       final file = await _file();
       await file.writeAsString(
         jsonEncode({
-          'version': 2,
+          'version': 3,
           'hosts': {
             for (final entry in entries.entries)
               entry.key: {
+                'host': entry.key.split('::').first,
                 'id': entry.value.sessionId,
                 'at': entry.value.savedAt.toIso8601String(),
                 'lines': [for (final line in entry.value.lines) line.toJson()],
@@ -231,6 +249,13 @@ class _Entry {
 final cachedConversationProvider = FutureProvider.family<CachedConversation?, String>((ref, hostId) async {
   await ChatCache.ensureLoaded();
   return ChatCache.forHost(hostId);
+});
+
+/// 某台机器上某条会话的本地正文快照。
+final cachedSessionProvider =
+    FutureProvider.family<CachedConversation?, (String hostId, String sessionId)>((ref, key) async {
+  await ChatCache.ensureLoaded();
+  return ChatCache.forSession(key.$1, key.$2);
 });
 
 /// 进会话时先给"上次聊到哪":一个标题条 + 正文气泡,底部渐隐。

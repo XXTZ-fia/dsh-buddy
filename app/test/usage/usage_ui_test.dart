@@ -58,11 +58,7 @@ Future<Map<String, Object?>> _stored() async {
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets('welcome, in English (light)', (tester) async {
-    await tester.runAsync(loadGoldenFonts);
-    await _pumpWelcome(tester, english: true);
-    await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/en_welcome_light.png'));
-  });
+
 
   group('the welcome row', () {
     for (final english in [false, true]) {

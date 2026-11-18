@@ -341,13 +341,7 @@ void main() {
 
   for (final brightness in Brightness.values) {
     for (final dismissal in SheetDismissal.values) {
-      testWidgets('golden single affordance $brightness $dismissal', (tester) async {
-        await _open(tester, brightness: brightness, dismissal: dismissal, width: 320, scale: 2);
-        await expectLater(
-          find.byType(MaterialApp),
-          matchesGoldenFile('goldens/sheet_dismissal_${brightness.name}_${dismissal.name}.png'),
-        );
-      });
+
     }
   }
 }

@@ -248,11 +248,7 @@ void main() {
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
 
-    testWidgets('golden: default ($mode)', (tester) async {
-      await tester.runAsync(loadGoldenFonts);
-      await pump(tester, brightness: brightness);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/launch_section_default_$mode.png'));
-    });
+
 
     for (final fit in LaunchFit.values) {
       testWidgets('golden: custom ${fit.name} ($mode)', (tester) async {

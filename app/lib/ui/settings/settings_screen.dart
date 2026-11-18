@@ -17,7 +17,7 @@ import '../../state/features_state.dart';
 import '../../state/hosts_state.dart';
 import '../../state/phone_state.dart';
 import '../../state/personal_tabs.dart';
-import '../../state/radar_feature.dart';
+import '../../state/radar_availability.dart';
 import '../../state/radar_prefs.dart' show radarAutoRefresh;
 import '../../state/plugins_state.dart';
 import '../../state/sessions_state.dart';
@@ -66,7 +66,6 @@ import 'privacy_page.dart';
 import 'search/settings_search_page.dart';
 import 'settings_widgets.dart';
 import 'system_access_page.dart';
-import 'voice_settings_page.dart';
 
 /// One hue per group on the hub: rows of a group share it.
 abstract final class SettingsHues {
@@ -155,51 +154,37 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ),
         const SettingsOverview(),
-        // 信息雷达是可选功能：这里始终有一个总开关；关闭时下面两项和
-        // 底部页签、自动化入口、后台轮询一起消失。
-        ValueListenableBuilder<bool>(
-          valueListenable: radarFeature,
-          builder: (context, radarEnabled, _) => SettingsSection(
+        // 雷达只存在于自建服务器形态：连官方中继时整段隐藏，没有开关。
+        if (ref.watch(radarAvailableProvider))
+          SettingsSection(
             title: l10n.radarFeatureGroup,
             children: [
-              SwitchListTile(
-                secondary: const Icon(Icons.radar),
-                title: Text(l10n.radarFeatureSwitch),
-                subtitle: Text(
-                  radarEnabled ? l10n.radarFeatureOn : l10n.radarFeatureOff,
-                ),
-                value: radarEnabled,
-                onChanged: (value) => unawaited(radarFeature.set(value)),
+              ListTile(
+                leading: const Icon(Icons.radar),
+                title: Text(l10n.radarTitle),
+                subtitle: Text(l10n.radarFeatureOn),
+                onTap: () {
+                  // Inside PersonalHome, switch to the live radar tab instead of
+                  // pushing a second RadarPage that would lose the research callback.
+                  if (personalTabsAvailable) {
+                    openPersonalTab(PersonalTab.radar);
+                  } else {
+                    _push(context, const RadarPage());
+                  }
+                },
               ),
-              if (radarEnabled) ...[
-                ListTile(
-                  leading: const Icon(Icons.radar),
-                  title: Text(l10n.radarTitle),
-                  onTap: () {
-                    // Inside PersonalHome, switch to the live radar tab instead of
-                    // pushing a second RadarPage that would lose the research callback.
-                    if (personalTabsAvailable) {
-                      openPersonalTab(PersonalTab.radar);
-                    } else {
-                      _push(context, const RadarPage());
-                    }
-                  },
+              ValueListenableBuilder<bool>(
+                valueListenable: radarAutoRefresh,
+                builder: (context, enabled, _) => SwitchListTile(
+                  secondary: const Icon(Icons.refresh),
+                  title: Text(l10n.radarAutoRefreshOnLaunch),
+                  subtitle: Text(l10n.radarAutoRefreshOnLaunchNote),
+                  value: enabled,
+                  onChanged: (value) => unawaited(radarAutoRefresh.set(value)),
                 ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: radarAutoRefresh,
-                  builder: (context, enabled, _) => SwitchListTile(
-                    secondary: const Icon(Icons.refresh),
-                    title: Text(l10n.radarAutoRefreshOnLaunch),
-                    subtitle: Text(l10n.radarAutoRefreshOnLaunchNote),
-                    value: enabled,
-                    onChanged: (value) =>
-                        unawaited(radarAutoRefresh.set(value)),
-                  ),
-                ),
-              ],
+              ),
             ],
           ),
-        ),
         SettingsSection(
           title: l10n.hubGroupAi,
           children: [
@@ -320,7 +305,6 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const LanguageSettingsTile(tint: SettingsHues.general),
             const NotificationSettingsTile(tint: SettingsHues.general),
-            const VoiceSettingsTile(tint: SettingsHues.general),
             const PerformanceSettingsTile(tint: SettingsHues.general),
             SettingsTile(
               icon: AppIcons.keepAlive,

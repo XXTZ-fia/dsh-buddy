@@ -1,15 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../l10n/l10n.dart';
 import '../../state/personal_server.dart';
 import '../../state/radar_prefs.dart';
+import '../../state/safe_mode_state.dart' show repairDraftProvider;
 import '../../state/settings_state.dart';
 import 'radar_client.dart';
 import 'radar_brief_api.dart';
 import 'radar_brief_view.dart';
+import 'radar_daily_view.dart';
 import 'radar_digest_view.dart';
 import 'radar_hot_api.dart';
 import 'radar_hot_view.dart';
@@ -18,6 +22,7 @@ import 'radar_management.dart';
 import 'radar_paper_settings.dart';
 import 'radar_papers_api.dart';
 import 'radar_papers_view.dart';
+import 'radar_zhihu_login_page.dart';
 import 'radar_self_host_page.dart';
 import 'radar_source_picker.dart';
 import 'radar_visuals.dart';
@@ -60,7 +65,9 @@ class _RadarPageState extends State<RadarPage> with WidgetsBindingObserver {
   RadarTab _tab = RadarTab.hot;
 
   final RadarHotController _hot = RadarHotController();
+  bool _zhihuPrompted = false;
   final RadarBriefController _brief = RadarBriefController();
+  final GlobalKey<RadarDailyViewState> _dailyKey = GlobalKey<RadarDailyViewState>();
   final RadarDigestController _digest = RadarDigestController();
   final RadarPapersController _papers = RadarPapersController();
   String? _hotFilter;
@@ -178,9 +185,9 @@ class _RadarPageState extends State<RadarPage> with WidgetsBindingObserver {
           token: saved.token,
           transport: widget.transport,
         );
-        await _syncModelKey();
-        await _loadHot();
         _startAutoRefresh();
+        // 首屏只等“能看见的榜单”：模型 Key 同步是本地读取，和热榜/论文并行。
+        await Future.wait([_syncModelKey(), _loadHot()]);
       }
     } on Object {
       if (mounted) setState(() => _error = context.l10n.radarFailure);
@@ -231,11 +238,10 @@ class _RadarPageState extends State<RadarPage> with WidgetsBindingObserver {
       _credentials = credentials;
       _url.text = credentials.url;
       _token.text = credentials.token;
-      await _syncModelKey();
       _digest.reset();
       _brief.reset();
       _startAutoRefresh();
-      await _loadHot();
+      await Future.wait([_syncModelKey(), _loadHot()]);
       return true;
     } on Object {
       candidate?.close();
@@ -258,9 +264,34 @@ class _RadarPageState extends State<RadarPage> with WidgetsBindingObserver {
         _papers.load(RadarPaperApi(client), force: force),
       ]);
       _lastLoadedAt = DateTime.now();
+      if (!_zhihuPrompted && _hot.zhihuNeedsLogin && mounted) {
+        _zhihuPrompted = true;
+        unawaited(_promptZhihuLogin(client));
+      }
     } finally {
       if (mounted) setState(() => _hotBusy = false);
     }
+  }
+
+  /// 知乎在机房 IP 上没有登录态就会整源不可用。第一次遇到时弹一次提示，
+  /// 让用户在手机 WebView 里登录，Cookie 只上传到用户自己的服务器。
+  Future<void> _promptZhihuLogin(RadarClient client) async {
+    final go = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.radarZhihuLoginTitle),
+        content: Text(context.l10n.radarZhihuLoginBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(context.l10n.radarZhihuLater)),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: Text(context.l10n.radarZhihuLoginAction)),
+        ],
+      ),
+    );
+    if (go != true || !mounted) return;
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(builder: (_) => RadarZhihuLoginPage(api: RadarHotApi(client))),
+    );
+    if (saved == true && mounted) await _loadHot(force: true);
   }
 
   Future<void> _reloadPapers() async {
@@ -290,10 +321,15 @@ class _RadarPageState extends State<RadarPage> with WidgetsBindingObserver {
   }
 
   /// 六平台简报：服务端采集/摘要后的快照，读的是 `/radar/items`。
+  /// 把一条素材交给工作页的 AI：先填进输入框，再切到「工作」，不自动发送。
+  void _ask(String prompt) {
+    ProviderScope.containerOf(context, listen: false).read(repairDraftProvider.notifier).request(prompt);
+    widget.onResearch?.call();
+  }
+
   Future<void> _loadBrief({bool force = false}) async {
-    final client = _client;
-    if (client == null) return;
-    await _brief.load(RadarBriefApi(client), force: force);
+    // 简报页已经换成每日总结：刷新交给它自己的状态，不再拉 `/radar/items`。
+    await _dailyKey.currentState?.refresh();
   }
 
   Future<void> _loadMoreBrief() async {
@@ -355,6 +391,63 @@ class _RadarPageState extends State<RadarPage> with WidgetsBindingObserver {
     if (filter == RadarHotRail.papersId) return const [];
     if (filter != null) return [filter];
     return radarPrefs.value.hotSources.take(60).toList();
+  }
+
+  /// 头部链接键：未连接时连接；已连接时先展示状态与动作，避免误触直接断开。
+  Future<void> _openConnectionActions() async {
+    final credentials = _credentials;
+    if (credentials == null) {
+      await _connect(_url.text, _token.text);
+      return;
+    }
+    final t = context.l10n;
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheet) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(AppIcons.link, size: 20),
+              title: Text(t.radarConnected),
+              subtitle: Text(credentials.url, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+            ListTile(
+              leading: const Icon(AppIcons.refresh, size: 20),
+              title: Text(t.radarRetry),
+              onTap: () => Navigator.of(sheet).pop('reconnect'),
+            ),
+            ListTile(
+              leading: const Icon(AppIcons.disconnected, size: 20),
+              title: Text(t.radarDisconnect),
+              onTap: () => Navigator.of(sheet).pop('disconnect'),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || action == null) return;
+    if (action == 'reconnect') {
+      await _connect(credentials.url, credentials.token);
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        title: Text(t.radarDisconnect),
+        content: const Text('断开后需要重新输入服务器地址和令牌，确定继续？'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialog).pop(false), child: Text(context.l10n.commonCancel)),
+          TextButton(
+            onPressed: () => Navigator.of(dialog).pop(true),
+            child: Text(t.radarDisconnect, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) await _disconnect();
   }
 
   Future<void> _disconnect() async {
@@ -457,12 +550,14 @@ class _RadarPageState extends State<RadarPage> with WidgetsBindingObserver {
                         ..._buildHotSlivers(t, p)
                       else if (_tab == RadarTab.brief)
                         SliverToBoxAdapter(
-                          child: RadarBriefView(
-                            controller: _brief,
-                            onOpen: _openBriefItem,
-                            onRefresh: () => _loadBrief(force: true),
-                            onLoadMore: _loadMoreBrief,
-                          ),
+                          child: _client == null
+                              ? const SizedBox.shrink()
+                              : RadarDailyView(
+                                  key: _dailyKey,
+                                  client: _client!,
+                                  onOpen: (item) => openHotLink(sourceId: item.platform, itemUrl: item.url),
+                                  onAsk: (prompt) async => _ask(prompt),
+                                ),
                         )
                       else
                         SliverToBoxAdapter(
@@ -521,13 +616,13 @@ class _RadarPageState extends State<RadarPage> with WidgetsBindingObserver {
                 palette: p,
               ),
               _HeaderIcon(
-                tooltip: connected ? t.radarDisconnect : t.radarConnect,
-                icon: connected ? AppIcons.disconnected : AppIcons.link,
+                tooltip: connected ? t.radarConnected : t.radarConnect,
+                icon: AppIcons.link,
                 onPressed: connected
-                    ? _disconnect
+                    ? _openConnectionActions
                     : () => _connect(_url.text, _token.text),
                 palette: p,
-                tint: connected ? null : p.accent,
+                tint: connected ? p.success : p.accent,
               ),
               _HeaderIcon(
                 tooltip: t.radarInbox,
@@ -770,6 +865,7 @@ class _RadarPageState extends State<RadarPage> with WidgetsBindingObserver {
               child: InkWell(
                 borderRadius: BorderRadius.circular(4),
                 onTap: () {
+                  HapticFeedback.selectionClick();
                   setState(() => _tab = tab);
                   if (tab == RadarTab.brief &&
                       !_brief.hasData &&

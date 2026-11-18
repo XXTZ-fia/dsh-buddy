@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../state/radar_prefs.dart';
 import 'radar_client.dart';
 import 'radar_hot_api.dart';
+import 'radar_snapshot_cache.dart';
 import 'radar_links.dart';
+import 'radar_ask.dart';
 import 'radar_visuals.dart';
 import '../theme/app_icons.dart';
 
@@ -37,6 +40,12 @@ class RadarHotController {
 
   RadarHotSource? sourceFor(String sourceId) => catalog?.byId(sourceId);
 
+  /// 知乎在机房 IP 上必须有登录 Cookie；服务端会把原因写进 feed.error。
+  bool get zhihuNeedsLogin {
+    final feed = feedFor('zhihu');
+    return feed?.error.contains('RADAR_ZHIHU_COOKIE') ?? false;
+  }
+
   bool get isStale {
     final at = loadedAt;
     return at == null || DateTime.now().difference(at) > ttl;
@@ -57,6 +66,16 @@ class RadarHotController {
 
   Future<void> load(RadarHotApi api, {bool force = false}) async {
     if (loading) return;
+    final origin = api.client.base.toString();
+    if (catalog == null && feeds.isEmpty) {
+      final snapshot = await RadarSnapshotCache.readHot(origin);
+      if (snapshot != null) {
+        catalog = snapshot.catalog;
+        feeds = snapshot.feeds;
+        loadedAt = snapshot.at;
+        _loadedIds = [for (final feed in feeds) feed.source];
+      }
+    }
     catalog ??= await api.catalog();
     // 本地偏好只做过滤，不参与等待：持久化慢或不可用时照样先出榜单。
     final known = {for (final source in catalog!.sources) source.id};
@@ -72,6 +91,7 @@ class RadarHotController {
       feeds = ids.isEmpty ? const [] : await api.boards(ids, refresh: force);
       _loadedIds = ids;
       loadedAt = DateTime.now();
+      if (feeds.isNotEmpty) unawaited(RadarSnapshotCache.writeHot(origin, catalog!, feeds));
     } on RadarApiException catch (failure) {
       error = 'HTTP ${failure.statusCode}';
     } on Object {
@@ -319,7 +339,7 @@ class RadarHotBoardCard extends StatelessWidget {
           // Rows are separated by space, not rules. At this density a line
           // between every item turns the feed back into a table of cells.
           for (var index = 0; index < items.length; index++)
-            RadarHotRow(item: items[index], onTap: () => onOpen(items[index])),
+            RadarHotRow(item: items[index], platform: source.id, onTap: () => onOpen(items[index])),
         ],
       ),
     );
@@ -331,9 +351,10 @@ class RadarHotBoardCard extends StatelessWidget {
 /// The old row spent attention on three separate decorations — a tinted rank
 /// tile, two rounded pills, a chevron. Same information, one quiet line.
 class RadarHotRow extends StatelessWidget {
-  const RadarHotRow({super.key, required this.item, required this.onTap});
+  const RadarHotRow({super.key, required this.item, required this.platform, required this.onTap});
 
   final RadarHotItem item;
+  final String platform;
   final VoidCallback onTap;
 
   @override
@@ -371,6 +392,16 @@ class RadarHotRow extends StatelessWidget {
                   ],
                 ],
               ),
+            ),
+            IconButton(
+              tooltip: '问 AI',
+              visualDensity: VisualDensity.compact,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              padding: EdgeInsets.zero,
+              onPressed: () => ProviderScope.containerOf(context, listen: false)
+                  .read(radarAskProvider.notifier)
+                  .ask(radarAskPrompt(platform: platform, title: item.title, url: item.url, summary: item.extra)),
+              icon: Icon(AppIcons.askAi, size: 15, color: p.accent),
             ),
           ],
         ),

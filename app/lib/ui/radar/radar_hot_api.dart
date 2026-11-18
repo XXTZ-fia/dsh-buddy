@@ -28,6 +28,17 @@ class RadarHotSource {
   /// 「哔哩哔哩 热搜」/「知乎」——search matches both parts.
   String get label => title.isEmpty ? name : '$name $title';
 
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'name': name,
+    'title': title,
+    'column': column,
+    'column_label': columnLabel,
+    'home': home,
+    'scheme': scheme,
+    'native': native,
+  };
+
   factory RadarHotSource.fromJson(Map<String, dynamic> json) => RadarHotSource(
     id: '${json['id'] ?? ''}',
     name: '${json['name'] ?? ''}',
@@ -54,6 +65,8 @@ class RadarHotItem {
   final String url;
   final String extra;
   final String time;
+
+  Map<String, Object?> toJson() => {'rank': rank, 'title': title, 'url': url, 'extra': extra, 'time': time};
 
   factory RadarHotItem.fromJson(Map<String, dynamic> json) => RadarHotItem(
     rank: (json['rank'] as num?)?.toInt() ?? 0,
@@ -90,6 +103,17 @@ class RadarHotFeed {
   bool get isOk => status == 'ok';
   bool get isEmpty => items.isEmpty;
 
+  Map<String, Object?> toJson() => {
+    'source': source,
+    'name': name,
+    'title': title,
+    'status': status,
+    'origin': origin,
+    'updated_at': updatedAt,
+    'error': error,
+    'items': [for (final item in items) item.toJson()],
+  };
+
   factory RadarHotFeed.fromJson(Map<String, dynamic> json) => RadarHotFeed(
     source: '${json['source'] ?? ''}',
     name: '${json['name'] ?? ''}',
@@ -112,6 +136,11 @@ class RadarHotCatalog {
 
   /// `(id, 显示名)`，顺序即分组顺序：国内 → 国际 → 财经 → 科技 → 体育。
   final List<(String, String)> columns;
+
+  Map<String, Object?> toJson() => {
+    'sources': [for (final source in sources) source.toJson()],
+    'columns': [for (final column in columns) {'id': column.$1, 'label': column.$2}],
+  };
 
   RadarHotSource? byId(String id) {
     for (final source in sources) {
@@ -160,6 +189,11 @@ class RadarHotApi {
     final json =
         await client.request('/radar/hot/digest', query: {if (refresh) 'refresh': 'true'}) as Map<String, dynamic>;
     return RadarDigest.fromJson(json);
+  }
+
+  /// 手机 WebView 登录知乎后把 Cookie 交给服务端：机房 IP 没有登录态会被知乎拒绝。
+  Future<void> saveZhihuCookie(String cookie) async {
+    await client.request('/radar/hot/sources/zhihu/cookie', body: {'cookie': cookie});
   }
 
   Future<RadarHotFeed> board(String sourceId, {int limit = 30, bool refresh = false}) async {

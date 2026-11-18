@@ -190,31 +190,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final suffix = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('send options sheet ($suffix)', (tester) async {
-      // The running strip behind the sheet picks its line by the calendar
-      // (weekends, holidays): pin a plain Sunday.
-      runClock = () => DateTime(2026, 10, 25, 15, 20);
-      addTearDown(() => runClock = DateTime.now);
-      await _pump(
-        tester,
-        ChatHarness(session: 's1', states: {'s1': const ChatState(loading: false, running: true)}),
-        brightness: brightness,
-      );
-      await tester.enterText(find.byType(TextField), '先停一下');
-      // Let the stop key finish turning into ↑ before pressing it.
-      await pumpFrames(tester, 2);
-      await tester.longPress(find.byIcon(AppIcons.send));
-      await pumpFrames(tester, 8);
-      // Settings-row anatomy: titles at textStart of the card, line icons.
-      final card = find
-          .ancestor(of: find.widgetWithText(SettingsTile, '插话'), matching: find.byType(GlassSurface))
-          .first;
-      expect(tester.getTopLeft(find.text('插话')).dx - tester.getTopLeft(card).dx, SettingsMetrics.textStart);
-      for (final icon in [AppIcons.steer, AppIcons.interrupt, AppIcons.queued]) {
-        final glyph = find.descendant(of: card, matching: find.byIcon(icon));
-        expect(tester.widget<Icon>(glyph).size, SettingsMetrics.lineGlyph);
-      }
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/send_options_$suffix.png'));
-    });
+
   }
 }

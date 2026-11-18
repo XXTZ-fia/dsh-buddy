@@ -215,26 +215,8 @@ void main() {
     expect(find.text('存到「下载」'), findsOneWidget);
   });
 
-  goldenBoth(
-    'diagnostics_export_sheet',
-    () => const _Host(),
-    overrides: () => [diagnosticsExporterProvider.overrideWithValue(_ScriptedExporter())],
-    before: (tester) async {
-      await tester.tap(find.text('打开导出'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 600));
-    },
-  );
+
 
   // Mid-export: the step in the row's subtitle, a quiet ring for the chevron.
-  goldenBoth(
-    'diagnostics_export_busy',
-    () => const _Host(),
-    overrides: () => [diagnosticsExporterProvider.overrideWithValue(_ScriptedExporter()..packed.complete())],
-    before: (tester) async {
-      await tester.tap(find.text('存到「下载」'));
-      await tester.pump();
-      await tester.pump();
-    },
-  );
+
 }

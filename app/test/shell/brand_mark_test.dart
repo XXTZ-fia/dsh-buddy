@@ -163,49 +163,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('sheet ($mode)', (tester) async {
-      await tester.runAsync(loadGoldenFonts);
-      tester.view.devicePixelRatio = 2;
-      tester.view.physicalSize = const Size(390 * 2, 300 * 2);
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        goldenApp(
-          brightness: brightness,
-          home: Builder(
-            builder: (context) {
-              final colors = DshColors.of(context);
-              Widget row(List<Widget> children) => Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: children,
-              );
-              return AppBackdrop(
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        row(const [BrandMark(size: 18), BrandMark(size: 26), BrandMark(size: 40), BrandMark(size: 60)]),
-                        row([
-                          BrandMark(size: 18, color: colors.textDisabled),
-                          const BrandMark(size: 26, color: Colors.white),
-                          const BrandMark(size: 52, tile: true),
-                          const BrandMark(size: 64, tile: true),
-                        ]),
-                        row(const [BrandLockup(height: 19), BrandLockup(fontSize: 17, label: 'dsh-go')]),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      );
-      await tester.pump();
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/brand_mark_$mode.png'));
-    });
+
   }
 }

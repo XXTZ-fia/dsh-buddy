@@ -8,7 +8,6 @@ import android.os.Looper
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.github.ccch1mneyyy.dsh_app.voice.VoiceDiagnostics
 import io.github.ccch1mneyyy.dsh_app.phone.PhoneControl
 import io.github.ccch1mneyyy.dsh_app.runtime.RuntimeManifest
 import io.github.ccch1mneyyy.dsh_app.update.ApkInstaller
@@ -58,7 +57,7 @@ class DiagnosticsPlugin : FlutterPlugin, io.flutter.embedding.engine.plugins.act
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
-            "info" -> background(result) { mapOf("app" to app(), "device" to device(), "manifest" to manifest(), "voice" to VoiceDiagnostics.snapshot(context)) }
+            "info" -> background(result) { mapOf("app" to app(), "device" to device(), "manifest" to manifest()) }
             "collectSystemIme" -> systemIme.collect(result)
             "cancelSystemIme" -> { systemIme.cancel(); result.success(null) }
             "engineLog" -> {

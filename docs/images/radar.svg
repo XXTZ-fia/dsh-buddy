@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1040" role="img" aria-label="信息雷达每日总结界面示意（示例数据）">
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0D0F14"/>
+      <stop offset="1" stop-color="#141823"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2A3550"/>
+      <stop offset="1" stop-color="#171C28"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7C9CFF"/>
+      <stop offset="1" stop-color="#9C7CFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="1040" rx="44" fill="#05060A"/>
+  <rect x="10" y="10" width="700" height="1020" rx="36" fill="url(#page)"/>
+
+  <text x="46" y="70" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18">9:41</text>
+  <text x="590" y="70" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18">5G  100%</text>
+
+  <text x="46" y="132" fill="#F1F3F9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="30" font-weight="700">信息雷达</text>
+  <circle cx="562" cy="124" r="4" fill="#6F7A91"/>
+  <circle cx="590" cy="124" r="4" fill="#6F7A91"/>
+  <circle cx="618" cy="124" r="4" fill="#6F7A91"/>
+
+  <circle cx="50" cy="170" r="5" fill="#5FD08C"/>
+  <text x="66" y="176" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15">已连接 · 9/9 来源正常 · 更新于 1 分钟前</text>
+
+  <text x="46" y="218" fill="#7C9CFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" font-weight="600">热榜</text>
+  <text x="112" y="218" fill="#F1F3F9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" font-weight="600">每日总结</text>
+  <text x="204" y="218" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17">概览</text>
+  <rect x="112" y="230" width="80" height="4" rx="2" fill="url(#line)"/>
+  <rect x="46" y="230" width="40" height="4" rx="2" fill="#202633"/>
+  <rect x="204" y="230" width="34" height="4" rx="2" fill="#202633"/>
+
+  <!-- 今日概览 -->
+  <rect x="40" y="256" width="640" height="320" rx="28" fill="url(#hero)" stroke="#33415E" stroke-width="1"/>
+  <text x="66" y="294" fill="#AEB8CC" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14">11 月 18 日 · 周三</text>
+  <rect x="208" y="278" width="44" height="20" rx="6" fill="#2C3A58"/>
+  <text x="216" y="293" fill="#8FB0FF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">今天</text>
+  <text x="580" y="294" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18">↻</text>
+  <text x="616" y="294" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18">▦</text>
+
+  <text x="66" y="338" fill="#F1F3F9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="700">今日概览</text>
+  <text x="66" y="404" fill="#F1F3F9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="52" font-weight="700">43.2k</text>
+  <text x="220" y="386" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14">tokens</text>
+  <text x="220" y="406" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12">今日已记录 · 缓存 99%</text>
+
+  <text x="66" y="446" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">最关注</text>
+  <text x="150" y="446" fill="#E6EAF4" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">示例兴趣话题 A</text>
+  <text x="66" y="474" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">用得多</text>
+  <text x="150" y="474" fill="#E6EAF4" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">DSH</text>
+  <text x="66" y="502" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">常用模型</text>
+  <text x="150" y="502" fill="#E6EAF4" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">V4 Flash</text>
+  <text x="66" y="534" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12">示例：今天共收录 12 条内容，头条是一条演示用中性标题。</text>
+  <rect x="66" y="546" width="72" height="20" rx="6" fill="#202633"/>
+  <text x="74" y="560" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10">12 条内容</text>
+  <rect x="146" y="546" width="72" height="20" rx="6" fill="#202633"/>
+  <text x="154" y="560" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10">6 个来源</text>
+
+  <!-- 周条 -->
+  <text x="66" y="614" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">一</text>
+  <text x="150" y="614" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">二</text>
+  <text x="234" y="614" fill="#8FB0FF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">三</text>
+  <text x="318" y="614" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">四</text>
+  <text x="402" y="614" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">五</text>
+  <text x="486" y="614" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">六</text>
+  <text x="570" y="614" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">日</text>
+  <text x="66" y="646" fill="#D7DCE8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15">16</text>
+  <text x="150" y="646" fill="#D7DCE8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15">17</text>
+  <circle cx="238" cy="640" r="18" fill="#7C9CFF"/>
+  <text x="231" y="646" fill="#0B0E15" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700">18</text>
+  <text x="318" y="646" fill="#D7DCE8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15">19</text>
+  <text x="402" y="646" fill="#D7DCE8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15">20</text>
+  <text x="486" y="646" fill="#D7DCE8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15">21</text>
+  <text x="570" y="646" fill="#D7DCE8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15">22</text>
+  <circle cx="238" cy="666" r="2.5" fill="#7C9CFF"/>
+  <text x="590" y="670" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12">▦ 月历</text>
+
+  <!-- 要闻 -->
+  <text x="46" y="714" fill="#AEB8CC" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" font-weight="600">今日要闻</text>
+  <rect x="40" y="730" width="640" height="104" rx="18" fill="#171C28" stroke="#2C3A58" stroke-width="1"/>
+  <text x="60" y="764" fill="#7C9CFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" font-weight="700">01</text>
+  <text x="94" y="764" fill="#F1F3F9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15">示例条目：一条中性的演示用要闻标题</text>
+  <text x="94" y="788" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12">示例概览：这件事发生了什么、为什么值得看。</text>
+  <text x="94" y="810" fill="#7C9CFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10">示例来源 A · 示例来源 B</text>
+  <text x="616" y="774" fill="#7C9CFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18">✦</text>
+
+  <rect x="40" y="846" width="640" height="74" rx="18" fill="#171C28"/>
+  <text x="60" y="878" fill="#6F7A91" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" font-weight="700">02</text>
+  <text x="94" y="878" fill="#E6EAF4" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">示例条目：第二条演示用标题</text>
+  <text x="94" y="898" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">示例概览：避免真实内容与真实来源。</text>
+
+  <rect x="40" y="932" width="640" height="60" rx="16" fill="#141924"/>
+  <text x="60" y="966" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">今日用量</text>
+  <text x="132" y="966" fill="#E6EAF4" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13" font-weight="600">43.2k tokens</text>
+  <text x="246" y="966" fill="#8E99AF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">缓存 99%</text>
+
+  <text x="360" y="1018" fill="#5D687D" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" text-anchor="middle">界面示意 · 示例数据，非真实榜单与账号</text>
+</svg>

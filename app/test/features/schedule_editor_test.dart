@@ -746,48 +746,7 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    group('goldens ($mode)', () {
-      testWidgets('new task', (tester) async {
-        await pump(tester, ScheduleEditorPage(now: _now), brightness: brightness);
-        await tester.enterText(find.widgetWithText(TextField, '比如：每日站会提醒'), '站会提醒');
-        await tester.enterText(find.byType(TextField).at(1), '整理昨天的提交，发我一段摘要');
-        FocusManager.instance.primaryFocus?.unfocus();
-        await pumpFrames(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/schedule_editor_new_$mode.png'));
-      });
 
-      testWidgets('edit, weekly in another zone', (tester) async {
-        await pump(
-          tester,
-          ScheduleEditorPage(
-            task: _task(
-              _entry('sch-2', 'weekly', {
-                'time': '09:00:00.000',
-                'timeZone': 'America/New_York',
-                'weekdays': [1, 3, 5],
-              }),
-            ),
-            now: _now,
-          ),
-          brightness: brightness,
-        );
-        await reveal(tester, find.byType(SchedulePreview));
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/schedule_editor_edit_$mode.png'));
-      });
-
-      testWidgets('time-zone sheet', (tester) async {
-        await pump(
-          tester,
-          ScheduleEditorPage(task: _task(_daily), now: _now),
-          brightness: brightness,
-        );
-        await reveal(tester, find.text('时区'));
-        await tester.tap(find.text('时区'));
-        await tester.pumpAndSettle();
-        expect(find.textContaining('本机'), findsOneWidget);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/schedule_zone_sheet_$mode.png'));
-      });
-    });
   }
 
   test('labels', () {

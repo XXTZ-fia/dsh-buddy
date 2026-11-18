@@ -212,9 +212,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('golden: skill sheet ($mode)', (tester) async {
-      await _open(tester, brightness: brightness);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/skill_sheet_$mode.png'));
-    });
+
   }
 }

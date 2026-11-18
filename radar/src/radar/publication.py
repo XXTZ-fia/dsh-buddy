@@ -27,6 +27,9 @@ def transaction(path: Path, *, write: bool = True) -> Iterator[sqlite3.Connectio
                 # Older/odd filesystems may refuse WAL; rollback journal still works.
                 with suppress(sqlite3.Error):
                     conn.execute("PRAGMA journal_mode=WAL")
+                # WAL 下 normal 已足够安全，写入不用每条都等 fsync。
+                with suppress(sqlite3.Error):
+                    conn.execute("PRAGMA synchronous=NORMAL")
                 _WAL_READY.add(path)
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS seen "

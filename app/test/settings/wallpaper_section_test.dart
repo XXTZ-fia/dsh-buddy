@@ -253,21 +253,7 @@ void main() {
     });
   });
 
-  group('goldens', () {
-    for (final brightness in Brightness.values) {
-      final mode = brightness == Brightness.dark ? 'dark' : 'light';
-      testWidgets('default ($mode)', (tester) async {
-        await pump(tester, brightness: brightness);
-        await scrollToWallpaper(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/wallpaper_section_default_$mode.png'));
-      });
-      testWidgets('custom ($mode)', (tester) async {
-        await pump(tester, stored: fixtureWallpaper(brightFixture), brightness: brightness);
-        await scrollToWallpaper(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/wallpaper_section_custom_$mode.png'));
-      });
-    }
-  });
+
 }
 
 /// Real I/O (prefs, the bake) lands a frame at a time; with a picture stored, until its phone

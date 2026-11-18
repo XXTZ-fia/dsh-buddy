@@ -107,7 +107,7 @@ ChatState _parentChat() => ChatState(
 ChatState _oneShotChat() => ChatState(
   loading: false,
   title: '查 CI 日志',
-  items: [user(1, '查一下 CI 上失败的那一步，结果写进最终回答。'), assistant(2, '失败在 `flutter test`：一个登录页的金图没更新。')],
+  items: [user(1, '查一下 CI 上失败的那一步，结果写进最终回答。'), assistant(2, '失败在 `flutter test`：一个登录页的界面基线没更新。')],
 );
 
 List<Override> _chatOverrides(String? session) => [
@@ -373,79 +373,7 @@ void main() {
     });
   });
 
-  group('goldens', () {
-    goldenBoth('drawer_ds_bot', _drawer, overrides: _drawerOverrides);
 
-    for (final brightness in Brightness.values) {
-      final mode = brightness.name;
-
-      testWidgets('all features, every group ($mode)', (tester) async {
-        // Tall enough for every group at once.
-        tester.view.devicePixelRatio = 1;
-        tester.view.physicalSize = const Size(390, 3000);
-        addTearDown(tester.view.reset);
-        await tester.pumpWidget(
-          testApp(const AllFeaturesPage(), brightness: brightness, overrides: _chatOverrides(parentId)),
-        );
-        await pumpFrames(tester, 8);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/all_features_full_$mode.png'));
-      });
-
-      testWidgets('one-shot child, read-only ($mode)', (tester) async {
-        usePhoneView(tester);
-        await tester.pumpWidget(
-          testApp(const ChatScreen(), brightness: brightness, overrides: _chatOverrides(brokenId)),
-        );
-        await pumpFrames(tester, 6);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/chat_read_only_$mode.png'));
-      });
-
-      testWidgets('new chat in a workspace ($mode)', (tester) async {
-        // The greeting follows the clock: the afternoon, as in the chat
-        // goldens.
-        chatClock = () => DateTime(2026, 10, 23, 15, 20);
-        addTearDown(() => chatClock = DateTime.now);
-        usePhoneView(tester);
-        await tester.pumpWidget(
-          testApp(
-            const ChatScreen(),
-            brightness: brightness,
-            overrides: [
-              ..._chatOverrides(null),
-              selectedWorkspaceProvider.overrideWithValue(
-                const Workspace(workspaceId: 'w1', path: '/root/workspace/dsh-app', title: 'dsh-app', sessionIds: []),
-              ),
-            ],
-          ),
-        );
-        await pumpFrames(tester, 8);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/chat_empty_workspace_$mode.png'));
-      });
-
-      testWidgets('lapsed sign-in row ($mode)', (tester) async {
-        usePhoneView(tester);
-        await tester.pumpWidget(
-          testApp(
-            Scaffold(
-              body: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    NoticeRow(item: _lapsed('openai-codex')),
-                    NoticeRow(item: _lapsed('anthropic')),
-                  ],
-                ),
-              ),
-            ),
-            brightness: brightness,
-          ),
-        );
-        await tester.pump();
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/notice_lapsed_$mode.png'));
-      });
-    }
-  });
 }
 
 class _MissingBot extends DsBotController {

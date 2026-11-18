@@ -18,7 +18,7 @@ object SensitiveWords {
     val confirmIdWords: Set<String> = setOf(
         "send", "publish", "submit", "pay", "payment", "checkout", "purchase", "buy",
         "transfer", "redpacket", "hongbao", "delete", "uninstall", "logout", "signout",
-        "unregister", "authorize", "agree", "dial",
+        "unregister", "authorize", "agree",
     )
 
     /** English control labels use word boundaries: "buy" must not match "buyer". */

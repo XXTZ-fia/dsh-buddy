@@ -218,15 +218,17 @@ class ErrorBanner extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final dsh = DshColors.of(context);
-    final container = info ? dsh.infoContainer : dsh.dangerContainer;
+    // 信息条和输入框同一块中性底色：蓝色 infoContainer 在聊天渐变上像另一个
+    // 控件，重连/同步这种常驻提示会一直抢注意力。
+    final container = info ? theme.colorScheme.surfaceContainerHigh : dsh.dangerContainer;
     final accent = info ? dsh.info : dsh.danger;
-    final onContainer = info ? dsh.onInfoContainer : dsh.onDangerContainer;
+    final onContainer = info ? theme.colorScheme.onSurface : dsh.onDangerContainer;
     return Semantics(
       liveRegion: true,
       child: DecoratedBox(
         decoration: ShapeDecoration(
           color: Color.alphaBlend(container.withValues(alpha: 0.92), theme.colorScheme.surface),
-          shape: Squircle.border(AppShape.md, side: BorderSide(color: accent.withValues(alpha: 0.3), width: 0.5)),
+          shape: Squircle.border(AppShape.md, side: BorderSide(color: accent.withValues(alpha: info ? 0.12 : 0.3), width: 0.5)),
           shadows: [
             BoxShadow(
               color: NeutralTones.current(context).shadowInk.withValues(alpha: 0.08),

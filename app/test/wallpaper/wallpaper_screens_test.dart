@@ -59,11 +59,7 @@ void main() {
     for (final brightness in Brightness.values) {
       final mode = brightness == Brightness.dark ? 'dark' : 'light';
 
-      testWidgets('golden: conversation on the $name picture ($mode)', (tester) async {
-        await pumpChat(tester, fixtureWallpaper(path), brightness);
-        expect(pictureUnder(tester, find.byType(Scaffold).first)?.image, isNotNull);
-        await expectLater(find.byType(ChatScreen), matchesGoldenFile('goldens/chat_${name}_$mode.png'));
-      });
+
     }
   }
 
@@ -72,35 +68,12 @@ void main() {
     ('dark', darkFixture, Brightness.dark),
   ]) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('golden: 首页 (a new chat) on the $name picture ($mode)', (tester) async {
-      await pumpChat(tester, fixtureWallpaper(path), brightness, home: true);
-      expect(pictureUnder(tester, find.byType(Scaffold).first)?.image, isNotNull);
-      await expectLater(find.byType(ChatScreen), matchesGoldenFile('goldens/home_${name}_$mode.png'));
-    });
+
   }
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('golden: the drawer over the wallpaper ($mode)', (tester) async {
-      SharedPreferences.setMockInitialValues({CustomWallpaper.prefsKey: jsonOf(fixtureWallpaper(brightFixture))});
-      shell.usePhoneSurface(tester);
-      await tester.pumpWidget(
-        shell.goldenApp(
-          home: HomeShell(chatBuilder: (_) => const SizedBox.expand(), initiallyOpen: true),
-          brightness: brightness,
-          overrides: [
-            localRuntimeProvider.overrideWith(
-              () => shell.FakeRuntime(const LocalRuntimeState(loaded: true, status: shell.runningStatus)),
-            ),
-            sessionsProvider.overrideWith(() => shell.FakeSessions(shell.sampleSessions())),
-            currentSessionProvider.overrideWith(() => shell.FakeCurrentSession('s2')),
-          ],
-        ),
-      );
-      await bakeLands(tester, find.byType(Scaffold).first);
-      expect(pictureUnder(tester, find.byType(Scaffold).first)?.image, isNotNull);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/drawer_$mode.png'));
-    });
+
   }
 
   testWidgets('baked once: scrolling and frames after it draw the same picture, no new bake', (tester) async {

@@ -12,6 +12,7 @@ import '../runtime/runtime_state.dart';
 import 'connection_state.dart';
 import 'hosts_state.dart';
 import 'read_list_cache.dart';
+import 'session_list_cache.dart';
 import 'read_list_identity.dart';
 import 'settings_state.dart';
 import 'workspaces_state.dart';
@@ -198,6 +199,8 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
     });
     final seq = ++_loadSeq;
     final host = ref.watch(activeHostProvider);
+    // 冷启动先读本地快照：连接中也能看到上次的会话列表，网络回来后整体替换。
+    final cachedRows = await SessionListCache.read(host.id);
     if (host != _host) {
       // Rows of the previous host never mix into this one's. (Riverpod still
       // shows them as the reload's previous value until the new list lands.)
@@ -221,7 +224,10 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
     _titleReads?.ref = r;
     if (conn == null) {
       _buildRead = null;
-      return r.read(readListCacheProvider).stamp(<SessionSummary>[], null, Object());
+      return r.read(readListCacheProvider).stamp(cachedRows, null, Object());
+    }
+    if (cachedRows.isNotEmpty && !state.hasValue) {
+      state = AsyncData(cachedRows);
     }
     final identity = r.watch(readListIdentityProvider);
     // Only a waiting or sending archive has anything to retire; otherwise a
@@ -274,7 +280,15 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
       unawaited(sub.cancel());
       unawaited(workspaces.cancel());
     });
-    return _buildRead = _load(r, conn.client, seq, identity);
+    final read = _load(r, conn.client, seq, identity);
+    _buildRead = read;
+    try {
+      return await read;
+    } on Object {
+      // 网络列表失败时保留上次的本地快照，而不是把左侧列表清空。
+      if (cachedRows.isNotEmpty) return cachedRows;
+      rethrow;
+    }
   }
 
   Future<List<SessionSummary>> _load(Ref r, DshClient client, int seq, ReadListIdentity? identity) async {
@@ -290,6 +304,7 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
       // A list already in flight when deletion completed may still contain
       // the old row. Only a server-confirmed deletion adds this host's fence.
       _all = sessions.where((s) => !_deleted.contains(s.sessionId)).toList();
+      unawaited(SessionListCache.write(r.read(activeHostProvider).id, sessions));
       final cache = r.read(readListCacheProvider);
       cache.stamp(sessions, identity, client);
       _origin = cache.origin(sessions);

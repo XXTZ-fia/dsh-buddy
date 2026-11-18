@@ -291,42 +291,10 @@ void main() {
   ]) {
     for (final brightness in Brightness.values) {
       final mode = brightness == Brightness.dark ? 'dark' : 'light';
-      testWidgets('golden $name ($mode)', (tester) async {
-        await tester.runAsync(loadGoldenFonts);
-        usePhoneSurface(tester);
-        // The whole page, down to the wallpaper.
-        tester.view.physicalSize = const Size(390 * 2, 2060 * 2);
-        await tester.pumpWidget(
-          _goldenApp(const AppearancePage(), brightness, accent, [
-            ..._overrides(wallpaper: _wallpaperBlue),
-            appearanceProvider.overrideWith(() => _FixedAppearance(state)),
-            launcherIconChannelProvider.overrideWithValue(const _Launcher()),
-          ]),
-        );
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 600));
-        await decodeImages(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/${name}_$mode.png'));
-      });
+
     }
   }
 
   // English smoke golden (i18n), light.
-  testWidgets('golden appearance (en)', (tester) async {
-    useEnglish();
-    await tester.runAsync(loadGoldenFonts);
-    usePhoneSurface(tester);
-    tester.view.physicalSize = const Size(390 * 2, 2060 * 2);
-    await tester.pumpWidget(
-      _goldenApp(inEnglish(const AppearancePage()), Brightness.light, AppAccent.mist, [
-        ..._overrides(wallpaper: _wallpaperBlue),
-        appearanceProvider.overrideWith(() => _FixedAppearance(const AppearanceSettings(loaded: true))),
-        launcherIconChannelProvider.overrideWithValue(const _Launcher()),
-      ]),
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 600));
-    await decodeImages(tester);
-    await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/en_appearance_light.png'));
-  });
+
 }

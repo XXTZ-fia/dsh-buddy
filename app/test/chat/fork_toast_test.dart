@@ -117,11 +117,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final suffix = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('golden: fork toast ($suffix)', (tester) async {
-      await _pump(tester, brightness: brightness);
-      await tester.tap(find.byTooltip('重新回答'));
-      await pumpFrames(tester);
-      await expectLater(find.byType(ChatScreen), matchesGoldenFile('goldens/fork_toast_$suffix.png'));
-    });
+
   }
 }

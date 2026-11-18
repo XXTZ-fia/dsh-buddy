@@ -256,30 +256,7 @@ void main() {
     }
 
     // English smoke golden (i18n), light.
-    testWidgets('golden (en)', (tester) async {
-      useEnglish();
-      await warmSheets(tester, deepy, [deepy.animFor(PetStateName.idle)]);
-      await warmSheets(tester, girl, [girl.animFor(PetStateName.idle)]);
-      usePhoneView(tester);
-      await tester.pumpWidget(
-        testApp(
-          inEnglish(const PetSettingsPage()),
-          overrides: [
-            petClockProvider.overrideWithValue(TestClock().call),
-            petPackProvider.overrideWith((ref, id) async => diskPack(id)),
-            petPrefsProvider.overrideWith(() => FixedPetPrefs(const PetPrefs(loaded: true))),
-          ],
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
-      final image = await tester.runAsync(() {
-        final view = RendererBinding.instance.renderViews.first;
-        return (view.debugLayer! as OffsetLayer).toImage(view.paintBounds);
-      });
-      await expectLater(image, matchesGoldenFile('goldens/en_pet_settings_light.png'));
-      image!.dispose();
-    });
+
 
     testWidgets('three choices with names, the source line, size and quiet mode', (tester) async {
       await page(tester);

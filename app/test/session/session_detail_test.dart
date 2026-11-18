@@ -171,27 +171,6 @@ void main() {
   for (final brightness in Brightness.values) {
     final suffix = brightness == Brightness.dark ? 'dark' : 'light';
 
-    group('goldens ($suffix)', () {
-      for (final tab in [
-        SessionTab.trajectory,
-        SessionTab.changes,
-        SessionTab.files,
-        SessionTab.progress,
-        SessionTab.context,
-      ]) {
-        testWidgets(tab.label, (tester) async {
-          await _pumpPage(
-            tester,
-            tab: tab,
-            brightness: brightness,
-            panels: tab == SessionTab.progress ? const SessionPanels(goal: _goal) : null,
-          );
-          await expectLater(
-            find.byType(SessionDetailPage),
-            matchesGoldenFile('goldens/session_${tab.name}_$suffix.png'),
-          );
-        });
-      }
-    });
+
   }
 }

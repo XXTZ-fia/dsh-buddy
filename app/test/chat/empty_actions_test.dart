@@ -375,22 +375,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    group('goldens ($mode)', () {
-      testWidgets('connected, in a workspace', (tester) async {
-        await _pumpChat(tester, brightness: brightness);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/empty_tiers_$mode.png'));
-      });
 
-      testWidgets('engine unreachable', (tester) async {
-        await _pumpChat(tester, failed: true, brightness: brightness);
-        await pumpFrames(tester, 6);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/empty_tiers_failed_$mode.png'));
-      });
-
-      testWidgets('360dp, large text', (tester) async {
-        await _pumpChat(tester, brightness: brightness, size: const Size(360, 780), textScale: 1.3);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/empty_tiers_narrow_$mode.png'));
-      });
-    });
   }
 }

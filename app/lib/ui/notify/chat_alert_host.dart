@@ -14,7 +14,7 @@ import '../../state/connection_state.dart';
 import '../../state/hosts_state.dart';
 import '../../state/notify_state.dart';
 import '../bots/bot_alerts.dart';
-import '../../state/radar_feature.dart';
+import '../../state/radar_availability.dart';
 import '../radar/radar_management.dart';
 import '../radar/radar_client.dart';
 import '../common/discard_guard.dart';
@@ -100,9 +100,9 @@ class _ChatAlertHostState extends ConsumerState<ChatAlertHost> {
   Future<void> _onTap(NotifyTap tap) async {
     if (!mounted || !await DiscardGuard.confirmLeave(context) || !mounted)
       return;
-    // 雷达关闭时服务端不会再发这类通知；若有历史通知残留，点击也不该把人带到
-    // 一个已经不存在的页面上。
-    if (tap.kind == 'radar' && radarFeature.value) {
+    // 官方中继下服务端不跑雷达，也不会发这类通知；历史通知残留同样不该
+    // 把人带到一个已经不存在的页面上。
+    if (tap.kind == 'radar' && ref.read(radarAvailableProvider)) {
       try {
         final client = await RadarClient.saved();
         final expected = (jsonDecode(tap.eventId ?? '{}') as Map)['origin'];

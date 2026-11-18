@@ -312,4 +312,6 @@
   "chatMentionSemantics": "{kind}: {label}",
   "chatArtifactSemantics": "{name}, {description}",
   "viewCachedTranscript": "Last conversation · syncing in the background"
+,
+  "chatUsageLine": "This chat · cache {cache} · in {input} · out {output}"
 }

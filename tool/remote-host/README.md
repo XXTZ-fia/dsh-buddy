@@ -1,5 +1,8 @@
 # Remote host 常驻（关闭 DSH 桌面端也能用）
 
+> App 里「我的 → 远程主机 → 让电脑常驻」已经内置了一段自包含命令，不需要本目录的脚本。
+> 这里保留的是同一思路的手动实现，供想自己控制计划任务、日志与 ACP 配置的用户参考。
+
 `ds-harness-remote` 的宿主部分跑在 DSH 进程里，关掉桌面窗口就等于下线。这里用**同一套 profile 以无头方式常驻**来解决：`dsh --profile web --no-open`，没有窗口、不弹浏览器。
 
 已实测（一台 Windows 主机）：
@@ -32,13 +35,13 @@
 
 ```powershell
 # 注册到登录启动（隐藏窗口，失败重启 3 次，不限时）
-powershell -ExecutionPolicy Bypass -File code\tool\remote-host\install.ps1
+powershell -ExecutionPolicy Bypass -File tool\remote-host\install.ps1
 
 # 手动跑（前台可见日志）
-powershell -File code\tool\remote-host\remote-host.ps1
+powershell -File tool\remote-host\remote-host.ps1
 
 # 一次性健康检查：只判断"桌面端在不在"，不启动 host
-powershell -File code\tool\remote-host\remote-host.ps1 -Once
+powershell -File tool\remote-host\remote-host.ps1 -Once
 ```
 
 卸载：`install.ps1 -Remove`。
@@ -73,10 +76,10 @@ powershell -File code\tool\remote-host\remote-host.ps1 -Once
 
 ```powershell
 # 探测 node / claude-agent-acp / opencode / codex，重写 profile 的 acp 段（幂等，带备份）
-powershell -File code\tool\remote-host\configure-acp.ps1
+powershell -File tool\remote-host\configure-acp.ps1
 
 # 检查三后端、插件版本、profile 配置与最近日志
-powershell -File code\tool\remote-host\remote-host.ps1 -Doctor
+powershell -File tool\remote-host\remote-host.ps1 -Doctor
 
 # 让配置生效
 Stop-Process -Id (Get-CimInstance Win32_Process -Filter "Name='node.exe'" |

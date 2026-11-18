@@ -13,7 +13,7 @@ cd app
 flutter pub get
 
 # 不要带 RADAR_SERVER_HOST / RELAY_SERVER_HOST：
-# 开源版默认不预填任何雷达地址，中继使用自带服务。
+# 开源版默认不预填任何服务器地址，中继使用官方服务。
 flutter build apk --release --flavor arm64 \
   --build-number="$(date +%Y%m%d%H%M)"
 ```
@@ -60,9 +60,9 @@ adb install app/build/app/outputs/flutter-apk/app-arm64-release.apk
 
 装机后逐项确认：
 
-1. 底部只有 **工作 / 自动化 / 资料 / 我的** 四个页签（雷达默认关闭）；
-2. 设置 → 可选功能 → 信息雷达可以打开，打开后出现雷达页签与教程入口；
-3. 「我的 → 连接 → 远程主机」能打开扫码配对；
+1. 官方中继下底部只有 **工作 / 自动化 / 资料 / 我的** 四个页签（无雷达）；
+2. 「我的 → 连接 → 远程主机」能打开扫码配对，「让电脑常驻」能复制命令；
+3. 切到自建服务器后底部出现「信息雷达」，切回官方中继后立即消失；
 4. 首次启动能解压运行时并进入工作页。
 
 ## 4. 发布
@@ -82,6 +82,7 @@ git push origin v1.2.0
 ## 5. 发布前检查
 
 - 本地构建**没有**注入任何私有地址：`--dart-define` 只应出现在你自己的本地测试里；
-- `git status` 干净，没有 `runtime/out/`、`tool/test-fonts/`、`*.db`、`*.jks`、`key.properties`；
+- `git status` 干净，没有 `runtime/out/`、`*.db`、`*.jks`、`key.properties`；
 - 用 `unzip -l app-arm64-release.apk | grep -i -E "key|secret|\.db"` 粗查一遍资源；
-- 在至少一台真机上从「未登录、无数据」的状态走一遍扫码配对。
+- 在至少一台真机上从「未登录、无数据」的状态走一遍扫码配对；
+- 有自建服务器时，再走一遍「自建服务器 → 雷达可见 → 切回官方中继 → 雷达隐藏」。

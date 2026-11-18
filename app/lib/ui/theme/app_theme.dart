@@ -324,11 +324,11 @@ ThemeData _build(
       contentTextStyle: textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
     ),
 
-    // 默认弹层是不透明的;要玻璃弹层用 common/app_sheet.dart 的
-    // `showAppSheet(glass: true)`(背景透明 + GlassSurface)。
+    // 默认弹层和对话框用同一块底色：玻璃弹层在聊天渐变上会发灰，和确认框
+    // 并排时像两种控件；要玻璃质感仍可显式 `showAppSheet(glass: true)`。
     bottomSheetTheme: BottomSheetThemeData(
-      backgroundColor: surfaces.sheet.fallbackFill,
-      modalBackgroundColor: surfaces.sheet.fallbackFill,
+      backgroundColor: popupFill,
+      modalBackgroundColor: popupFill,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       modalElevation: 0,

@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import os
+from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, Header, HTTPException, Query, Request
+from fastapi import APIRouter, Body, Header, HTTPException, Query, Request
+from pydantic import BaseModel, Field
 
 from radar.authz import allow_refresh
 from radar.config import Config, with_model_key
@@ -13,8 +16,18 @@ from radar.hot.catalog import COLUMNS, catalog, resolve
 from radar.hot.providers import PROVIDERS
 
 
+class ZhihuCookie(BaseModel):
+    cookie: str = Field(min_length=8, max_length=8192)
+
+
 def router(cfg: Config) -> APIRouter:
     api = APIRouter()
+
+    # 机房 IP 抓知乎必须带登录 Cookie。手机端在 WebView 里登录后把 Cookie
+    # 上传到这里，落盘到数据目录，API 进程当场生效，不用重启服务。
+    cookie_path = Path(cfg.db_path).parent / "zhihu_cookie"
+    if not os.environ.get("RADAR_ZHIHU_COOKIE") and cookie_path.exists():
+        os.environ["RADAR_ZHIHU_COOKIE"] = cookie_path.read_text(encoding="utf-8").strip()
 
     @api.get("/radar/hot/sources")
     def sources() -> dict[str, Any]:
@@ -23,6 +36,18 @@ def router(cfg: Config) -> APIRouter:
             # native=false 的来源没有直连实现，App 里显示「暂不可用」而不是转圈。
             "sources": [{**row, "native": row["id"] in PROVIDERS} for row in catalog()],
         }
+
+    @api.put("/radar/hot/sources/zhihu/cookie")
+    def put_zhihu_cookie(request: Request, body: ZhihuCookie = Body(...)) -> dict[str, Any]:
+        if request.state.device != "admin":
+            raise HTTPException(403, "administrator credential required")
+        value = body.cookie.strip()
+        if "z_c0=" not in value:
+            raise HTTPException(422, "cookie must contain z_c0")
+        os.environ["RADAR_ZHIHU_COOKIE"] = value
+        cookie_path.write_text(value, encoding="utf-8")
+        cookie_path.chmod(0o600)
+        return {"ok": True}
 
     @api.get("/radar/hot/feed")
     def feed(

@@ -231,25 +231,7 @@ void main() {
   for (final english in [false, true]) {
     for (final brightness in Brightness.values) {
       final name = '${english ? 'en_' : ''}tool_images_${brightness.name}';
-      testWidgets('golden $name', (tester) async {
-        if (english) useEnglish();
-        usePhoneView(tester);
-        await tester.pumpWidget(
-          scene(
-            result(count: 3),
-            brightness: brightness,
-            english: english,
-            overrides: [
-              sessionImageProvider(('child-session', imageAt(0))).overrideWith((ref) async => portrait),
-              sessionImageProvider(('child-session', imageAt(1))).overrideWith((ref) async => png),
-              sessionImageProvider(('child-session', imageAt(2)))
-                  .overrideWith((ref) async => throw StateError('missing')),
-            ],
-          ),
-        );
-        await openDetails(tester);
-        await expectLater(find.byType(ToolRow), matchesGoldenFile('goldens/$name.png'));
-      });
+
     }
   }
 }

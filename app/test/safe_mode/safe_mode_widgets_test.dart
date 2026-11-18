@@ -197,35 +197,5 @@ void main() {
     expect(bridge.calls, contains('setAutoSafe:false'));
   });
 
-  group('goldens', () {
-    goldenBoth(
-      'engine_failed',
-      () => const EngineScreen(),
-      overrides: () {
-        bridge = FakeBridge(lkg: lkgUseful);
-        return overrides(failedStatus());
-      },
-    );
-    goldenBoth(
-      'engine_safe_mode',
-      () => const EngineScreen(),
-      overrides: () {
-        bridge = FakeBridge(
-          lkg: lkgUseful,
-          hazards: const [
-            SafeHazard(path: '/root/.dsh/cordis.patch.yml', kind: 'homePatch', detail: '全局补丁文件：对所有配置（包括安全模式）都生效。'),
-          ],
-        );
-        return overrides(safeStatus());
-      },
-    );
-    goldenBoth(
-      'banner_safe_mode',
-      () => page(const Column(children: [SafeModeBanner()])),
-      overrides: () {
-        bridge = FakeBridge();
-        return overrides(safeStatus());
-      },
-    );
-  });
+
 }

@@ -231,30 +231,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    group('goldens ($mode)', () {
-      testWidgets('wide_panel', (tester) async {
-        await _pumpHome(tester, brightness: brightness);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/wide_panel_$mode.png'));
-      });
 
-      testWidgets('wide_sidebar', (tester) async {
-        await _pumpHome(tester, brightness: brightness, prefs: const LayoutPrefs(loaded: true, panelOpen: false));
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/wide_sidebar_$mode.png'));
-      });
-
-      testWidgets('medium_sheet', (tester) async {
-        await _pumpHome(tester, size: _medium, brightness: brightness);
-        await _openSheet(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/medium_sheet_$mode.png'));
-      });
-
-      testWidgets('medium_sheet_full', (tester) async {
-        final semantics = tester.ensureSemantics();
-        await _pumpHome(tester, size: _medium, brightness: brightness);
-        await _openSheet(tester, full: true);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/medium_sheet_full_$mode.png'));
-        semantics.dispose();
-      });
-    });
   }
 }

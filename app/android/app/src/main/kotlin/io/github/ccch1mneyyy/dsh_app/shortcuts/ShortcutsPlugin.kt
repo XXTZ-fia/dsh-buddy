@@ -24,7 +24,7 @@ import java.util.concurrent.Executors
  * Launcher shortcuts and the Quick Settings tile: MethodChannel `dsh/shortcuts`.
  *
  * Entries ([EntryActivity] → MainActivity as [ACTION_ENTRY]) are pushed to Dart as `entry`
- * calls, `{kind: new | voice | chat | screenshot, sessionId?, host?, text?, path?}`, after
+ * calls, `{kind: new | chat | screenshot, sessionId?, host?, text?, path?}`, after
  * Dart's `ready` (held until then, like links/LinksPlugin). An entry without this process's
  * [token] is ignored. `text` is
  * 问一句's text the floating pet couldn't send itself (pet/PetOverlay.kt): it waits in the composer.
@@ -147,7 +147,7 @@ class ShortcutsPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHa
         }
         // Consumed either way: an entry without our token goes nowhere.
         if (intent.getStringExtra(EXTRA_TOKEN) != token) return true
-        if (kind != KIND_NEW && kind != KIND_VOICE && kind != KIND_CHAT) return true
+        if (kind != KIND_NEW && kind != KIND_CHAT) return true
         val sessionId = intent.getStringExtra(EXTRA_SESSION)
         if (kind == KIND_CHAT && sessionId.isNullOrEmpty()) return true
         val event = mapOf(
@@ -170,7 +170,6 @@ class ShortcutsPlugin : FlutterPlugin, ActivityAware, MethodChannel.MethodCallHa
         private const val EXTRA_TAKEN = "io.github.ccch1mneyyy.dsh_app.entry.TAKEN"
 
         const val KIND_NEW = "new"
-        const val KIND_VOICE = "voice"
         const val KIND_CHAT = "chat"
         const val KIND_SCREENSHOT = "screenshot"
 

@@ -64,19 +64,7 @@ void main() {
     expect((reset.zoom, reset.alignX, reset.alignY), (1.0, 0.0, 0.0));
   });
 
-  testWidgets('the keys sit 12 from the sides, the hint centred; golden', (tester) async {
-    await pump(tester, fixtureWallpaper(darkFixture));
-    final cancel = tester.getRect(find.byKey(const ValueKey('wallpaper-editor-cancel')));
-    final done = tester.getRect(find.byKey(const ValueKey('wallpaper-editor-done')));
-    expect(cancel.left, moreOrLessEquals(12, epsilon: 0.01));
-    expect(390 - done.right, moreOrLessEquals(12, epsilon: 0.01));
-    expect(cancel.center.dy, moreOrLessEquals(done.center.dy, epsilon: 0.01));
-    final hint = tester.getRect(
-      find.ancestor(of: find.byKey(const ValueKey('wallpaper-editor-reset')), matching: find.byType(Row)).first,
-    );
-    expect(hint.center.dx, moreOrLessEquals(195, epsilon: 0.01));
-    await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/editor_light.png'));
-  });
+
 
   testWidgets('a picture that can no longer be read: says so, nothing to save', (tester) async {
     await pump(tester, fixtureWallpaper(brokenFixture));

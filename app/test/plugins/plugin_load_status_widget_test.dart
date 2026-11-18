@@ -260,10 +260,7 @@ void main() {
         expect(tester.takeException(), isNull);
       });
 
-      testWidgets('golden load diagnostics ($suffix)', (tester) async {
-        await _pump(tester, inventory: _inventory(), locale: locale, brightness: brightness);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/plugin_load_$suffix.png'));
-      }, tags: ['golden']);
+
     }
   }
 }

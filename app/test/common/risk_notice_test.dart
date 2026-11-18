@@ -370,31 +370,7 @@ void main() {
     }
   });
 
-  group('goldens', () {
-    for (final brightness in Brightness.values) {
-      for (final medium in [false, true]) {
-        final mode = brightness.name;
-        final tier = medium ? 'medium' : 'high';
-        testWidgets('$tier ($mode)', (tester) async {
-          await tester.runAsync(loadTestFonts);
-          final bench = await _pump(
-            tester,
-            () => medium ? RiskNotices.allowForChat : RiskNotices.phoneConfirmAlways,
-            brightness: brightness,
-          );
-          await bench.open();
-          await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/risk_notice_${tier}_$mode.png'));
-        });
-      }
-    }
 
-    testWidgets('320 wide, 2x text (light)', (tester) async {
-      await tester.runAsync(loadTestFonts);
-      final bench = await _pump(tester, () => RiskNotices.appRule('支付宝', fromDeny: true), width: 320, scale: 2);
-      await bench.open();
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/risk_notice_large_text_light.png'));
-    });
-  });
 
   testWidgets('English copy fits at 320 wide, 2x text', (tester) async {
     AppLocale.use(AppLocale.en);

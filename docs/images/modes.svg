@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 520" role="img" aria-label="官方中继与自有服务器的页签对比">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0E1015"/>
+      <stop offset="1" stop-color="#151924"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7C9CFF"/>
+      <stop offset="1" stop-color="#9C7CFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1100" height="520" fill="url(#bg)"/>
+  <text x="50" y="58" fill="#F2F4FA" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="26" font-weight="700">雷达只跟服务器走</text>
+  <text x="50" y="88" fill="#9AA3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14">同一个 APK，切换中继后页签自动增减，不需要另装版本。</text>
+
+  <!-- official -->
+  <g>
+    <rect x="60" y="130" width="400" height="320" rx="22" fill="#171B25" stroke="#2A3142"/>
+    <rect x="82" y="154" width="356" height="272" rx="14" fill="#0F1219"/>
+    <text x="104" y="192" fill="#E8EBF3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" font-weight="600">官方中继</text>
+    <text x="104" y="214" fill="#7F8AA3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">dsh.r2049.cn · 扫码即用</text>
+    <rect x="104" y="238" width="312" height="86" rx="12" fill="#141926" stroke="#232A3B"/>
+    <text x="120" y="268" fill="#C9D0E2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">会话 / 工作区 / 工具审批</text>
+    <text x="120" y="292" fill="#7F8AA3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">电脑关掉窗口也能常驻在线</text>
+    <text x="120" y="312" fill="#7F8AA3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">不采集、不上传</text>
+
+    <rect x="82" y="370" width="356" height="56" rx="12" fill="#121722"/>
+    <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" text-anchor="middle">
+      <text x="140" y="404" fill="#6F7A91">工作</text>
+      <text x="230" y="404" fill="#6F7A91">自动化</text>
+      <text x="320" y="404" fill="#6F7A91">资料</text>
+      <text x="400" y="404" fill="#6F7A91">我的</text>
+    </g>
+    <text x="260" y="470" fill="#6FD39A" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12">4 个页签 · 无雷达</text>
+  </g>
+
+  <!-- self hosted -->
+  <g>
+    <rect x="640" y="130" width="400" height="320" rx="22" fill="#171B25" stroke="#3A4A72"/>
+    <rect x="662" y="154" width="356" height="272" rx="14" fill="#0F1219"/>
+    <rect x="640" y="130" width="400" height="6" rx="3" fill="url(#accent)"/>
+    <text x="684" y="192" fill="#E8EBF3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" font-weight="600">自有服务器</text>
+    <text x="684" y="214" fill="#8FA6E0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">你的域名 · 一键脚本 + 账号登录</text>
+    <rect x="684" y="238" width="312" height="86" rx="12" fill="#141926" stroke="#232A3A"/>
+    <text x="700" y="268" fill="#C9D0E2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="13">同上，外加信息雷达</text>
+    <text x="700" y="292" fill="#7F8AA3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">47 个热榜源 / 跨源简报 / 论文</text>
+    <text x="700" y="312" fill="#7F8AA3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11">数据只留在你的服务器</text>
+
+    <rect x="662" y="370" width="356" height="56" rx="12" fill="#121722"/>
+    <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12" text-anchor="middle">
+      <text x="704" y="404" fill="#6F7A91">工作</text>
+      <text x="776" y="404" fill="#AFC0EA">信息雷达</text>
+      <text x="858" y="404" fill="#6F7A91">自动化</text>
+      <text x="930" y="404" fill="#6F7A91">资料</text>
+      <text x="990" y="404" fill="#6F7A91">我的</text>
+    </g>
+    <text x="840" y="470" fill="#AFC0EA" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="12">5 个页签 · 雷达出现</text>
+  </g>
+</svg>

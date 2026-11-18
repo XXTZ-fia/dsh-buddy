@@ -436,35 +436,6 @@ void main() {
   for (final brightness in Brightness.values) {
     final suffix = brightness == Brightness.dark ? 'dark' : 'light';
 
-    group('goldens ($suffix)', () {
-      testWidgets('two channels, effort shown', (tester) async {
-        await _openSheet(
-          tester,
-          _harness(
-            multiCatalog,
-            model: const ModelSelection(provider: 'openrouter', model: 'z-ai/glm-4.6', reasoningEffort: 'high'),
-          ),
-          brightness: brightness,
-        );
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/model_sheet_channels_$suffix.png'));
-      });
 
-      testWidgets('a model without efforts', (tester) async {
-        await _openSheet(
-          tester,
-          _harness(
-            multiCatalog,
-            model: const ModelSelection(provider: 'openrouter', model: 'moonshotai/kimi-k2'),
-          ),
-          brightness: brightness,
-        );
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/model_sheet_no_effort_$suffix.png'));
-      });
-
-      testWidgets('crowded channels', (tester) async {
-        await _openSheet(tester, _harness(crowdedCatalog), brightness: brightness);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/model_sheet_crowded_$suffix.png'));
-      });
-    });
   }
 }

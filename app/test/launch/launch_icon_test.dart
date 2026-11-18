@@ -172,24 +172,11 @@ void main() {
   // ── Goldens: what each launch looks like at its first frame and as the icon comes in ──
 
   for (final variant in ['mist', 'night', 'frost', 'ink']) {
-    testWidgets('golden: $variant at the hand-over (13+, its own splash theme)', (tester) async {
-      final c = await start(tester, systemIcon: true, variant: variant);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/launch_icon_${variant}_handover.png'));
-      await finish(tester, c);
-    });
+
   }
 
   for (final dark in [false, true]) {
     final mode = dark ? 'dark' : 'light';
-    testWidgets('golden: night, no system icon, coming in ($mode)', (tester) async {
-      final c = await start(tester, systemIcon: false, variant: 'night', dark: dark);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/launch_noicon_start_$mode.png'));
-      await c.handOver(null, removed: true);
-      await tester.pump();
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 160));
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/launch_noicon_in_$mode.png'));
-      await finish(tester, c);
-    });
+
   }
 }

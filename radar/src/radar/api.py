@@ -6,12 +6,15 @@ import hashlib
 import hmac
 import json
 import sqlite3
+from dataclasses import replace
 from typing import Annotated, Any, Literal
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi import Body, Depends, FastAPI, Header, HTTPException, Request
+from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
-from radar.config import Config, load, read_env
+from radar import daily as daily_service
+from radar.config import Config, load, read_env, with_model_key
 from radar.hot import service as hot_service
 from radar.hot.api import router as hot_router
 from radar.management import router, schema
@@ -20,6 +23,18 @@ from radar.papers.api import router as papers_router
 from radar.publication import snapshot, transaction
 
 Platform = Literal["x", "douyin", "bili", "weibo", "zhihu", "xhs"]
+
+
+class UsageRecord(BaseModel):
+    day: str
+    device: str = "unknown"
+    backend: str = "dsh"
+    model: str = "unknown"
+    input: int = 0
+    output: int = 0
+    cache_read: int = 0
+    cache_write: int = 0
+    turns: int = 0
 
 
 def default_platforms() -> list[Platform]:
@@ -165,6 +180,47 @@ def create_app(cfg: Config) -> FastAPI:
             "items": [{**json.loads(row[0]), "read": row[1] is not None} for row in rows],
         }
 
+    @app.get("/radar/daily")
+    def daily(day: str | None = None, model_key: str = Header(default="", alias="X-Radar-Model-Key")) -> dict[str, Any]:
+        target = day or __import__("datetime").date.today().isoformat()
+        with transaction(cfg.db_path, write=False) as conn:
+            settings = read_settings(conn)
+        active = replace(cfg, interests=tuple(settings.interests),
+                         model_name=settings.summary_model or cfg.model_name)
+        active = with_model_key(active, model_key)
+        try:
+            return daily_service.build(cfg.db_path, cfg=active, day=target)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.post("/radar/daily/refresh")
+    def daily_refresh(day: str | None = None, model_key: str = Header(default="", alias="X-Radar-Model-Key")) -> dict[str, Any]:
+        target = day or __import__("datetime").date.today().isoformat()
+        with transaction(cfg.db_path, write=False) as conn:
+            settings = read_settings(conn)
+        active = replace(cfg, interests=tuple(settings.interests),
+                         model_name=settings.summary_model or cfg.model_name)
+        active = with_model_key(active, model_key)
+        try:
+            return daily_service.build(cfg.db_path, cfg=active, day=target, refresh=True)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.get("/radar/daily/calendar")
+    def daily_calendar(month: str | None = None) -> dict[str, Any]:
+        target = month or __import__("datetime").date.today().strftime("%Y-%m")
+        try:
+            return daily_service.calendar(cfg.db_path, target)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.post("/radar/usage")
+    def usage(records: list[UsageRecord] = Body(...)) -> dict[str, Any]:
+        with transaction(cfg.db_path) as conn:
+            daily_service.ensure(conn)
+            written = daily_service.record_usage(conn, [row.model_dump() for row in records])
+        return {"written": written}
+
     @app.get("/radar/health")
     def health() -> dict[str, Any]:
         # 只读快照里的 health：不要为它再跑一次分页查询。
@@ -220,6 +276,8 @@ def create_app(cfg: Config) -> FastAPI:
             )
         return {"key": request.key, "status": "queued", "result": result}
 
+    # 手机弱网下，热榜/日报 JSON 经常几十 KB；压缩后首屏明显更快。
+    app.add_middleware(GZipMiddleware, minimum_size=512)
     app.include_router(router(cfg))
     app.include_router(hot_router(cfg))
     app.include_router(papers_router(cfg))

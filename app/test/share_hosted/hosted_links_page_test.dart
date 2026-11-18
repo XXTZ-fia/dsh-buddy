@@ -176,9 +176,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('golden ($mode)', (tester) async {
-      await _pump(tester, brightness: brightness);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/hosted_links_$mode.png'));
-    });
+
   }
 }

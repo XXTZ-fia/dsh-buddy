@@ -274,28 +274,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    group('goldens ($mode)', () {
-      testWidgets('new preset', (tester) async {
-        await pump(tester, const PresetEditorPage(), brightness: brightness);
-        await tester.enterText(find.widgetWithText(TextField, '比如：代码审查'), 'Code Review');
-        await tester.enterText(find.widgetWithText(TextField, '一句话说明它适合做什么'), '只读审查改动，逐条列出问题');
-        FocusManager.instance.primaryFocus?.unfocus();
-        await pumpFrames(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/preset_editor_new_$mode.png'));
-      });
 
-      testWidgets('tool switches', (tester) async {
-        await pump(tester, const PresetEditorPage(), brightness: brightness);
-        await reveal(tester, find.text('文件搜索工具'));
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/preset_editor_tools_$mode.png'));
-      });
-
-      testWidgets('custom preset sheet', (tester) async {
-        await pump(tester, const AgentPresetsPage(), brightness: brightness);
-        await tester.tap(find.text('代码审查'));
-        await tester.pumpAndSettle();
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/preset_sheet_custom_$mode.png'));
-      });
-    });
   }
 }

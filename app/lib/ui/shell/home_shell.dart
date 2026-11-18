@@ -24,7 +24,6 @@ import '../features/all_features_page.dart';
 import '../forum/forum_link_host.dart';
 import '../notify/background_net_host.dart';
 import '../notify/chat_alert_host.dart';
-import '../notify/voice_model_host.dart';
 import '../plugins/plugins_screen.dart';
 import '../pets/pet_settings_page.dart';
 import '../phone/phone_stop_watcher.dart';
@@ -341,7 +340,6 @@ class _HomeShellState extends ConsumerState<HomeShell> with TickerProviderStateM
                       const BackgroundNetHost(),
                       // Personal fork: releases are distributed with its own package identity.
                       // The voice model chosen during setup: download, resume, ready / failed notices (draws nothing).
-                      const VoiceModelHost(),
                       // 公测版: once in a while, an invitation to star the project (draws nothing).
                       StarPromptHost(drawer: _drawer, quickPanel: _quickPanel),
                       // App links / shared files: routes them to their feature (draws nothing).

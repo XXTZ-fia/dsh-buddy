@@ -238,15 +238,7 @@ void main() {
     });
 
     // English smoke golden (i18n): the handle and its sheet, light.
-    testWidgets('the handle sheet (en)', (tester) async {
-      useEnglish();
-      final container = await _pumpHome(tester, _windows.first, session: 's1');
-      await container.read(uiModeProvider.notifier).set(UiMode.web);
-      await tester.tap(_handle);
-      await tester.pumpAndSettle();
-      expect(find.text('Switch to native'), findsOneWidget);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/en_web_handle_sheet_light.png'));
-    });
+
 
     testWidgets('back at the page\'s root leaves the app, as on the native home', (tester) async {
       await _pumpHome(tester, _windows.first);

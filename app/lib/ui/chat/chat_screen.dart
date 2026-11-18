@@ -43,6 +43,8 @@ import '../../state/safe_mode_state.dart';
 import '../../state/session_modes.dart';
 import '../../state/sessions_state.dart';
 import '../../state/settings_state.dart';
+import '../../state/usage_reporter.dart';
+import '../radar/radar_ask.dart';
 import '../../state/usage_state.dart';
 import '../../state/voice_state.dart';
 import '../../state/voice_model_state.dart';
@@ -104,6 +106,7 @@ import 'mention/mention_text_controller.dart';
 import 'model_sheet.dart';
 import 'slash_palette.dart';
 import 'trajectory_sheet.dart';
+import 'usage_line.dart';
 import 'usage_sheet.dart';
 import 'voice/voice_controller.dart';
 import 'widgets/activity_strip.dart';
@@ -859,12 +862,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
           filesAllowed: canStageFiles(ref.read(activeConnectionProvider).value, ref.read(activeHostProvider)),
         );
         setState(() => _drafts = merged.attachments);
-        _compose(merged.text, quoteChip: false, focus: !request.voice);
+        _compose(merged.text, quoteChip: false, focus: true);
         _saveDraft();
-        if (request.voice) {
-          _focus.unfocus();
-          unawaited(_voice.start());
-        }
         if (merged.problem ?? request.note case final line?) {
           showComposerToast(context, line, composerHeight: _veilHeight.value + _ChatLayout.overlap);
         }
@@ -1609,7 +1608,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final sessionId = ref.watch(currentSessionProvider);
     // 缓存按**机器**存:下次连这台电脑时先把它的上次对话摆出来。
     final hostId = ref.watch(activeHostProvider).id;
-    final cached = ref.watch(cachedConversationProvider(hostId)).value;
+    final cached = sessionId == null
+        ? null
+        : ref.watch(cachedSessionProvider((hostId, sessionId))).value;
     if (sessionId != null) {
       // 消息一变就存(去抖)。另外进页面时先存一次:哪怕这次只是打开看一眼,
       // 下次冷启动也有东西可看。内容没变时 scheduleSave 直接返回。
@@ -1658,6 +1659,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     // one fix rather than a blank list.
     final idleBlank =
         idle != null && sessionId != null && ref.watch(chatProvider(sessionId).select((s) => s.items.isEmpty));
+    final chatLoading = sessionId != null &&
+        ref.watch(chatProvider(sessionId).select((s) => s.loading && s.items.isEmpty));
+    final showCached = cached != null &&
+        (sessionId == null || cached.sessionId == sessionId) &&
+        (chatLoading || !connected);
+    final showSkeleton = chatLoading && cached == null;
 
     // 只盯顶栏 / 输入条需要的几个字段:流式增量不重建整页。
     final chat = sessionId == null
@@ -1698,10 +1705,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final contextFraction = sessionId == null
         ? null
         : ref.watch(sessionUsageProvider(sessionId).select((u) => u.contextFraction));
+    if (sessionId != null) {
+      // 每日总结的 token 统计：只报本进程看到的新增部分。
+      final host = ref.watch(activeHostProvider);
+      ref.listen(sessionUsageProvider(sessionId), (_, next) {
+        unawaited(
+          UsageReporter.instance.observe(
+            sessionId: sessionId,
+            usage: next,
+            device: host.name?.isNotEmpty == true ? host.name! : host.id,
+            backend: ref.read(agentBackendProvider(host)).id,
+            model: ref.read(chatProvider(sessionId)).model?.model ?? 'unknown',
+            sessionCreatedAt: ref.read(chatProvider(sessionId).notifier).header?.createdAt,
+          ),
+        );
+      });
+    }
     // 「帮我修复」: a fresh chat with the repair prompt in the composer,
     // not sent — the person reads it first.
     ref.listen(repairDraftProvider, (_, next) {
       if (next != null) _takeRepairDraft();
+    });
+    ref.listen(radarAskProvider, (_, next) {
+      if (next == null) return;
+      final prompt = ref.read(radarAskProvider.notifier).take();
+      if (prompt == null || !mounted) return;
+      _input.text = prompt;
+      _input.selection = TextSelection.collapsed(offset: prompt.length);
+      _focus.requestFocus();
     });
     ref.listen(composerInsertProvider, (_, next) {
       if (next != null) _takeComposerInsert();
@@ -1832,15 +1863,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
           body: NativeComposerScope(
             host: _nativeHost,
             ref: ref,
-            child: PetStage(
-              sessionId: sessionId,
-              aside: typing,
-              child: CustomMultiChildLayout(
+            child: CustomMultiChildLayout(
                 delegate: _ChatLayout(_veilHeight),
                 children: [
                   LayoutId(
                     id: _Slot.body,
-                    child: sessionId == null || idleBlank
+                    child: sessionId == null || idleBlank || showCached || showSkeleton
                         ? Padding(
                             padding: EdgeInsets.only(top: headerHeight, bottom: _ChatLayout.overlap),
                             child: Align(
@@ -1855,11 +1883,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                       const EngineFailureCard(padding: EdgeInsets.fromLTRB(16, 0, 16, 20)),
                                     // 还没连上时先给上次的正文:不让人盯着"正在连接",
                                     // 真 history 到了整块换掉。
-                                    if (!connected && cached != null && (sessionId == null || cached.sessionId == sessionId))
+                                    if (cached != null && (sessionId == null || cached.sessionId == sessionId))
                                       Padding(
                                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                                         child: CachedTranscriptView(lines: cached.lines),
                                       )
+                                    else if (showSkeleton)
+                                      const _ChatSkeleton()
                                     else
                                     ChatEmptyState(
                                       connected: connected,
@@ -2246,7 +2276,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                         : l10n.mediaHintImage,
                                     onSend: _send,
                                     onSendOptions: chat?.controlReady ?? true ? _sendOptions : null,
-                                    voice: _voice,
                                     onKeyEvent: _mentions.handleKey,
                                     onContentInserted: connected ? _pasteContent : null,
                                     onStop: _stop,
@@ -2292,6 +2321,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                             onTap: () => _openUsage(sessionId, chat?.model),
                                           ),
                                   ),
+                                if (sessionId != null && !readOnly)
+                                  ChatUsageLine(
+                                    sessionId: sessionId,
+                                    onTap: () => _openUsage(sessionId, chat?.model),
+                                  ),
                               ],
                             ),
                           ),
@@ -2302,7 +2336,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                 ],
               ),
             ),
-          ),
         ),
       ),
     );
@@ -2658,4 +2691,39 @@ class _ChatScaler extends TextScaler {
 
   @override
   int get hashCode => Object.hash(base, factor);
+}
+
+
+/// 第一次打开、又没有本地缓存时的占位：给聊天结构，不给转圈。
+class _ChatSkeleton extends StatelessWidget {
+  const _ChatSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    Widget bubble({required bool mine, required double width, double height = 42}) => Align(
+      alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        width: width,
+        height: height,
+        margin: const EdgeInsets.symmetric(vertical: 7),
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerHighest.withValues(alpha: mine ? 0.55 : 0.38),
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    );
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+      children: [
+        bubble(mine: false, width: 220, height: 58),
+        bubble(mine: true, width: 180),
+        bubble(mine: false, width: 280, height: 76),
+        bubble(mine: false, width: 160),
+        bubble(mine: true, width: 140),
+        bubble(mine: false, width: 240, height: 64),
+      ],
+    );
+  }
 }

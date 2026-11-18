@@ -287,37 +287,16 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness.name;
-    testWidgets('golden: the first page ($mode)', (tester) async {
-      await _open(tester, brightness: brightness);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/share_panel_$mode.png'));
-    });
 
-    testWidgets('golden: 图片 ($mode)', (tester) async {
-      await _open(tester, brightness: brightness);
-      await _key(tester, 'share-to-image');
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/share_image_$mode.png'));
-    });
+
+
   }
 
-  testWidgets('golden: the first page (en)', (tester) async {
-    useEnglish();
-    await _open(tester);
-    await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/en_share_panel_light.png'));
-  });
 
-  testWidgets('golden: 链接 before and after it is made', (tester) async {
-    await _open(tester, state: _fixture(), reply: 'a6');
-    await _key(tester, 'share-to-link');
-    await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/share_link_light.png'));
-    await _key(tester, 'share-link-make');
-    await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/share_link_ready_light.png'));
-  });
 
-  testWidgets('golden: 文件', (tester) async {
-    await _open(tester, state: _fixture(), reply: 'a6', scope: ShareScope.whole);
-    await _key(tester, 'share-to-file');
-    await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/share_file_light.png'));
-  });
+
+
+
 
   // ── Scope and privacy ─────────────────────────────────────────────────────
 

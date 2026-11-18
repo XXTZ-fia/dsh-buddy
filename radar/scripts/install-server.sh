@@ -49,7 +49,11 @@ PY
 fi
 chown root:radar /etc/personal-assistant/config.yaml /etc/personal-assistant/radar.env
 chmod 640 /etc/personal-assistant/config.yaml /etc/personal-assistant/radar.env
-/opt/personal-assistant/venv/bin/playwright install-deps chromium
+chmod 755 /opt/personal-assistant
+chmod -R a+rX /opt/personal-assistant/venv
+if test "${SKIP_PLAYWRIGHT_DEPS:-0}" != 1; then
+  /opt/personal-assistant/venv/bin/playwright install-deps chromium
+fi
 runuser -u radar -- env PLAYWRIGHT_BROWSERS_PATH=/var/lib/personal-assistant/browsers /opt/personal-assistant/venv/bin/playwright install chromium
 install -m 644 "$source_dir/scripts/radar-api.service" /etc/systemd/system/radar-api.service
 install -m 644 "$source_dir/scripts/radar-worker.service" /etc/systemd/system/radar-worker.service

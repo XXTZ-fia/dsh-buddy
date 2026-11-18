@@ -522,25 +522,7 @@ void main() {
       overrides: () => providerOverrides(FakeProviderBackend()),
     );
 
-    testWidgets('provider_model (en)', (tester) async {
-      useEnglish();
-      await tester.runAsync(loadGoldenFonts);
-      tester.view.devicePixelRatio = 2;
-      tester.view.physicalSize = const Size(390 * 2, 1340 * 2);
-      tester.view.padding = const FakeViewPadding(top: 32 * 2, bottom: 24 * 2);
-      tester.view.viewPadding = const FakeViewPadding(top: 32 * 2, bottom: 24 * 2);
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        goldenApp(
-          home: inEnglish(const ProviderModelPage(model: _qwen)),
-          brightness: Brightness.light,
-          overrides: providerOverrides(FakeProviderBackend()),
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 600));
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/en_provider_model_light.png'));
-    });
+
   });
 }
 

@@ -196,8 +196,6 @@ class SystemActions(private val app: Context) : SystemApi {
                 spec.description?.let { intent.putExtra(CalendarContract.Events.DESCRIPTION, it) }
                 prepare(intent, AppStrings.get(app, R.string.phone_notice_calendar))
             }
-            is IntentSpec.Dial -> prepare(Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Uri.encode(spec.number))),
-                AppStrings.get(app, R.string.phone_notice_dial))
             is IntentSpec.SmsDraft -> prepare(Intent(Intent.ACTION_SENDTO,
                 Uri.parse("smsto:" + (spec.number?.let { Uri.encode(it) } ?: ""))).putExtra("sms_body", spec.text),
                 AppStrings.get(app, R.string.phone_notice_sms))

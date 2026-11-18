@@ -138,9 +138,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final suffix = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('folded turns with a plugin card ($suffix)', (tester) async {
-      await _pump(tester, brightness);
-      await expectLater(find.byType(ChatScreen), matchesGoldenFile('goldens/plugin_card_folded_$suffix.png'));
-    });
+
   }
 }

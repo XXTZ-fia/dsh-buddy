@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../l10n/l10n.dart';
 
 /// 自建雷达服务器的三步教程。
 ///
 /// 只在用户主动点进来时出现：App 不内置任何服务器地址，也不替用户选后端。
-/// 命令用等宽字体并允许选中复制——教程的价值在于能照着敲。
+/// 命令用等宽字体并允许选中复制，下面再给一个「复制命令」按钮——教程的
+/// 价值在于能照着敲，而不是让人手抄域名。
 class RadarSelfHostPage extends StatelessWidget {
   const RadarSelfHostPage({super.key});
+
+  static const installCommand =
+      'sudo tool/server/install-all.sh \\\n'
+      '  --relay-host dsh.example.com \\\n'
+      '  --radar-host radar.example.com \\\n'
+      '  --email you@example.com';
 
   static Route<void> route() =>
       MaterialPageRoute<void>(builder: (_) => const RadarSelfHostPage());
@@ -32,6 +40,25 @@ class RadarSelfHostPage extends StatelessWidget {
           const SizedBox(height: 20),
           _Step(title: t.radarSelfHostStep1, body: t.radarSelfHostStep1Body),
           _Step(title: t.radarSelfHostStep2, body: t.radarSelfHostStep2Body),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 22),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FilledButton.tonalIcon(
+                onPressed: () async {
+                  await Clipboard.setData(
+                    const ClipboardData(text: installCommand),
+                  );
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(SnackBar(content: Text(t.commonCopied)));
+                },
+                icon: const Icon(Icons.copy, size: 18),
+                label: Text(t.commonCopy),
+              ),
+            ),
+          ),
           _Step(title: t.radarSelfHostStep3, body: t.radarSelfHostStep3Body),
           const SizedBox(height: 8),
           Text(

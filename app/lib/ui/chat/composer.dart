@@ -15,7 +15,6 @@ import '../../l10n/l10n.dart';
 import '../common/expand_reveal.dart';
 import '../common/smooth_size.dart';
 import '../pets/pet_perch.dart';
-import '../settings/voice_settings_page.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'voice/voice_controller.dart';
@@ -334,12 +333,6 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
           persist: false,
           action: message.openSettings && voice != null
               ? SnackBarAction(label: appL10n.chatGoToSettings, onPressed: () => voice.bridge.openSettings())
-              : message.change
-              ? SnackBarAction(
-                  label: appL10n.nearbyChange,
-                  onPressed: () =>
-                      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const VoiceSettingsPage())),
-                )
               : null,
         ),
       );
@@ -366,11 +359,8 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
     final voice = widget.voice;
     voice?.ensureFresh();
 
-    // The chat page's pet stands on the composer's top edge (outside a pet
-    // stage this is a plain pass-through).
-    return PetPerch(
-      kind: PerchKind.composer,
-      child: _ComposerGlass(
+    // 工作界面的输入框上方不再站宠物；PetPerch 会在这里画一只动态的小东西。
+    return _ComposerGlass(
         open: widget.footer == null ? null : _open,
         child: ListenableBuilder(
           listenable: Listenable.merge([widget.controller, ?voice]),
@@ -580,7 +570,6 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
             );
           },
         ),
-      ),
     );
   }
 }

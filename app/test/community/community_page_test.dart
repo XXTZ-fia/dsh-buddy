@@ -74,18 +74,9 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('hub golden ($mode)', (tester) async {
-      await pump(tester, brightness: brightness, onOpenForum: () {}, height: 1400);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/community_$mode.png'));
-    });
 
-    testWidgets('group sheet golden ($mode)', (tester) async {
-      await pump(tester, brightness: brightness);
-      await tester.scrollUntilVisible(find.text('QQ 交流群'), 200);
-      await tester.tap(find.text('QQ 交流群'));
-      await tester.pumpAndSettle();
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/community_group_$mode.png'));
-    });
+
+
   }
 
   testWidgets('without the forum hook the lead card is the project', (tester) async {

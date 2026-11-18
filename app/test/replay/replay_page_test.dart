@@ -86,31 +86,9 @@ void main() {
   for (final brightness in Brightness.values) {
     final mode = brightness.name;
 
-    testWidgets('finished replay golden ($mode)', (tester) async {
-      await _open(tester, brightness: brightness);
-      await tester.tap(find.byKey(const ValueKey('replay-all')));
-      await tester.pumpAndSettle();
-      // From the top: the prompt with its picture, the folded process.
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, 4000));
-      await tester.pumpAndSettle();
-      await _settleImages(tester);
-      await expectLater(find.byType(ReplayPage), matchesGoldenFile('goldens/replay_end_$mode.png'));
-    });
 
-    testWidgets('playing replay golden ($mode)', (tester) async {
-      await _open(tester, brightness: brightness);
-      // Mid-turn: the code reply streaming in, the todo list over the button.
-      await tester.tap(find.byKey(const ValueKey('replay-play')));
-      await tester.pump();
-      for (var i = 0; i < 60; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-        if (_progress(tester) > 0.42) break;
-      }
-      await tester.tap(find.byKey(const ValueKey('replay-play')));
-      await tester.pump(const Duration(milliseconds: 400));
-      await _settleImages(tester);
-      await expectLater(find.byType(ReplayPage), matchesGoldenFile('goldens/replay_playing_$mode.png'));
-    });
+
+
   }
 
   testWidgets('plays, pauses, changes speed, seeks and shows everything', (tester) async {

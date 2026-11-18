@@ -35,7 +35,7 @@ object PhoneToolCatalog {
         )
     }
 
-    val INTENT_KINDS = listOf("alarm", "timer", "calendar", "dial", "sms_draft", "share", "navigate", "settings")
+    val INTENT_KINDS = listOf("alarm", "timer", "calendar", "sms_draft", "share", "navigate", "settings")
     val SETTINGS_PAGES = listOf(
         "home", "wifi", "bluetooth", "mobile_network", "airplane", "display", "sound", "battery",
         "location", "date", "language", "storage", "nfc", "app_notifications",
@@ -96,7 +96,7 @@ object PhoneToolCatalog {
                 // l10n:keep agent tool catalog
                 "alarm(hour,minute,days?,message?)、timer(seconds,message?)、calendar(title,begin,end?,all_day?,location?,description?)、" +
                 // l10n:keep agent tool catalog
-                "dial(number)、sms_draft(number?,text)、share(text,app?)、navigate(destination|lat+lng,mode?,map?)、settings(page,app?)。",
+                "sms_draft(number?,text)、share(text,app?)、navigate(destination|lat+lng,mode?,map?)、settings(page,app?)。",
             linkedMapOf(
                 // l10n:keep agent tool catalog
                 "kind" to enum(INTENT_KINDS, "事务类型"),

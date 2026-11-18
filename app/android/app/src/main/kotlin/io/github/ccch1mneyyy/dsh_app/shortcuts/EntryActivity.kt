@@ -61,7 +61,6 @@ class EntryActivity : Activity() {
 
     companion object {
         const val ACTION_NEW_CHAT = "io.github.ccch1mneyyy.dsh_app.action.NEW_CHAT"
-        const val ACTION_VOICE = "io.github.ccch1mneyyy.dsh_app.action.VOICE_INPUT"
         const val ACTION_OPEN_CHAT = "io.github.ccch1mneyyy.dsh_app.action.OPEN_CHAT"
         const val ACTION_SCREENSHOT = "io.github.ccch1mneyyy.dsh_app.action.SCREENSHOT"
         private const val ACTION_OPEN_APP = "io.github.ccch1mneyyy.dsh_app.action.OPEN_APP"
@@ -74,7 +73,6 @@ class EntryActivity : Activity() {
 
         fun kindOf(action: String?): String? = when (action) {
             ACTION_NEW_CHAT -> ShortcutsPlugin.KIND_NEW
-            ACTION_VOICE -> ShortcutsPlugin.KIND_VOICE
             ACTION_OPEN_CHAT -> ShortcutsPlugin.KIND_CHAT
             ACTION_SCREENSHOT -> ShortcutsPlugin.KIND_SCREENSHOT
             else -> null
@@ -82,7 +80,6 @@ class EntryActivity : Activity() {
 
         fun newChat(context: Context): Intent = Intent(context, EntryActivity::class.java).setAction(ACTION_NEW_CHAT)
 
-        fun voice(context: Context): Intent = Intent(context, EntryActivity::class.java).setAction(ACTION_VOICE)
 
         fun openApp(context: Context): Intent = Intent(context, EntryActivity::class.java).setAction(ACTION_OPEN_APP)
 

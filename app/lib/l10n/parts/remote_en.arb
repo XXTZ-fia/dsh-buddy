@@ -227,7 +227,11 @@
   "remoteSoftwareOpencodeNote": "OpenCode sessions on this computer",
   "remoteSoftwareCli": "Terminal · {tool}",
   "@remoteSoftwareCli": {
-    "placeholders": {"tool": {"type": "String"}}
+    "placeholders": {
+      "tool": {
+        "type": "String"
+      }
+    }
   },
   "remoteSoftwareCliNote": "Run this tool's own CLI in a terminal on the computer",
   "remoteCliSection": "Terminal",
@@ -244,7 +248,7 @@
   "remoteRelayLoginRequired": "Enter the server address, email and password",
   "remoteErrSignIn": "Couldn’t sign in",
   "remoteSelfHostedServer": "Self-hosted server",
-  "remoteSelfHostedSignInHelp": "Sign in to your own liguobao/ds-harness-remote with email and password",
+  "remoteSelfHostedSignInHelp": "Sign in to the relay you deployed with email and password (tool/server/install-all.sh prints the account)",
   "remoteServerAddress": "Server address",
   "remoteEmail": "Email",
   "remotePassword": "Password",
@@ -465,7 +469,7 @@
   "remoteErrHistoryModeChanged": "The Host no longer supports compact history. Switch to another host and back, or restart the app, to reload history.",
   "remoteCompactHistoryHint": "Reduces historical tool details on supporting DSH Remote Hosts; live replies and approvals stay unchanged. Switch hosts or restart the app to apply. Older Hosts keep full history.",
   "searchKwRemoteCompactHistory": "compact slim lite history tools transfer bandwidth remote",
-  "remotePersonalServerNotice": "Enter your own relay address and sign in with email and password. Switch back to the official relay below if it is unreachable.",
+  "remotePersonalServerNotice": "Enter your own relay address and sign in with email and password. The radar tab appears once you are connected; switch back to the official relay below if this address is unreachable.",
   "remoteUseOfficialRelay": "Use official relay (fallback)",
   "remotePersonalRelayMissing": "This server only provides the radar API and has no DSH Remote relay. Switch to the official relay or deploy ds-harness-remote on the server.",
   "remoteLinkDirect": "Direct",
@@ -473,6 +477,21 @@
   "remoteLinkRelay": "Relay",
   "remoteLinkSetup": "setup",
   "remoteLinkUnknown": "Connected",
-  "remoteHostOfflineHint": "This computer is offline: open DSH on it, or keep the remote-host daemon running, and this row comes back online."
+  "remoteHostOfflineHint": "This computer is offline: open DSH on it, or keep the remote-host daemon running, and this row comes back online.",
+  "remoteKeepOnline": "Keep the computer online",
+  "remoteKeepOnlineSetup": "Set up a headless host",
+  "remoteKeepOnlineHint": "The phone can still reach this computer after DSH is closed.",
+  "remoteKeepOnlineIntro": "The Remote plugin lives inside the DSH process, so closing the window takes it offline. This command keeps a headless copy running in the background and starts it at sign-in.",
+  "remoteKeepOnlineStep1": "1. Open a terminal on the computer",
+  "remoteKeepOnlineStep1Body": "No administrator rights needed; dsh must be installed and already signed in to the relay.",
+  "remoteKeepOnlineStep2": "2. Paste and run the whole command",
+  "remoteKeepOnlineStep2Body": "The first run installs the plugin into the headless profile and takes about a minute. The pairing page then opens by itself: click Remote → DSH Go QR → Generate pairing QR and scan it with your phone. If no window opens, paste the 127.0.0.1 address printed in the window into your browser.",
+  "remoteKeepOnlineStep3": "3. Come back and check",
+  "remoteKeepOnlineStep3Body": "When a new host for the same computer appears, switch to it. The old entry disappears after DSH closes.",
+  "remoteKeepOnlineCopy": "Copy command",
+  "remoteKeepOnlineCheck": "Check for the host",
+  "remoteKeepOnlineChecking": "Refreshing hosts…",
+  "remoteKeepOnlineFound": "New host found",
+  "remoteKeepOnlineNone": "Not found yet. Make sure the command finished and the computer is online, then retry.",
+  "remoteKeepOnlineSwitch": "Switch to this host"
 }
-

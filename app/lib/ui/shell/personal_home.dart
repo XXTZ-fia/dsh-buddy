@@ -1,15 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../../state/chat_state.dart';
 import '../../state/connection_state.dart';
 import '../../state/hosts_state.dart';
 import '../../state/notify_state.dart';
 import '../../state/personal_server.dart';
 import '../../state/personal_tabs.dart';
-import '../../state/radar_feature.dart';
+import '../../state/radar_availability.dart';
+import '../radar/radar_ask.dart';
 import '../../state/sessions_state.dart';
 import '../common/list_page_row.dart' show ListPageCard, ListPageRow;
 import '../common/status_dot.dart';
@@ -47,17 +50,18 @@ class _PersonalHomeState extends ConsumerState<PersonalHome>
   PersonalTab _tab = PersonalTab.work;
   final Set<PersonalTab> _visited = {PersonalTab.work};
 
-  /// 可见目的地随「信息雷达」开关变化：关闭时只有四个，开启时五个。
-  List<PersonalTab> get _tabs => [
+  /// 可见目的地随中继类型变化：连官方中继时四个，连自建服务器时五个。
+  /// 雷达需要用户自己的服务器，官方中继不跑雷达后端。
+  List<PersonalTab> _tabsFor(bool radarAvailable) => [
     PersonalTab.work,
-    if (radarFeature.value) PersonalTab.radar,
+    if (radarAvailable) PersonalTab.radar,
     PersonalTab.automation,
     PersonalTab.library,
     PersonalTab.settings,
   ];
 
-  int get _index {
-    final index = _tabs.indexOf(_tab);
+  int _indexFor(List<PersonalTab> tabs) {
+    final index = tabs.indexOf(_tab);
     return index < 0 ? 0 : index;
   }
 
@@ -68,16 +72,12 @@ class _PersonalHomeState extends ConsumerState<PersonalHome>
     duration: const Duration(milliseconds: 150),
     value: 1,
   );
-  int _switchToken = 0;
 
   @override
   void initState() {
     super.initState();
     personalTabsAvailable = true;
     personalTabRequest.addListener(_onTabRequest);
-    radarFeature.addListener(_onRadarFeatureChanged);
-    // 默认关闭；读到 true 时监听器会把页签补上。
-    unawaited(radarFeature.load());
   }
 
   @override
@@ -85,20 +85,7 @@ class _PersonalHomeState extends ConsumerState<PersonalHome>
     _fade.dispose();
     personalTabsAvailable = false;
     personalTabRequest.removeListener(_onTabRequest);
-    radarFeature.removeListener(_onRadarFeatureChanged);
     super.dispose();
-  }
-
-  /// 关掉雷达时如果正停在那一页，落到设置页（开关就在那里），
-  /// 而不是留在一个已经没有入口的页面上。
-  void _onRadarFeatureChanged() {
-    if (!mounted) return;
-    setState(() {
-      if (!radarFeature.value && _tab == PersonalTab.radar) {
-        _tab = PersonalTab.settings;
-      }
-      _visited.remove(PersonalTab.radar);
-    });
   }
 
   void _onTabRequest() {
@@ -110,8 +97,8 @@ class _PersonalHomeState extends ConsumerState<PersonalHome>
 
   void _select(PersonalTab value) {
     FocusManager.instance.primaryFocus?.unfocus();
-    // 雷达关闭时任何指向它的跳转都落到设置页：那里有开启开关。
-    if (value == PersonalTab.radar && !radarFeature.value) {
+    // 官方中继下雷达不存在：任何指向它的跳转都落到设置页。
+    if (value == PersonalTab.radar && !ref.read(radarAvailableProvider)) {
       value = PersonalTab.settings;
     }
     ref.read(chatOnScreenProvider.notifier).set(value == PersonalTab.work);
@@ -127,16 +114,12 @@ class _PersonalHomeState extends ConsumerState<PersonalHome>
       });
       return;
     }
-    // 先淡下去再换页,再淡回来:比硬切顺,又不用重建页面(状态都在)。
-    final token = ++_switchToken;
-    _fade.reverse().then((_) {
-      if (!mounted || token != _switchToken) return;
-      setState(() {
-        _tab = value;
-        _visited.add(value);
-      });
-      _fade.forward();
+    // 立即换页,只做一次淡入:不再先等 150ms 淡出,点哪页就是哪页。
+    setState(() {
+      _tab = value;
+      _visited.add(value);
     });
+    _fade.forward(from: 0);
   }
 
   Widget _pageFor(PersonalTab tab) => switch (tab) {
@@ -149,10 +132,27 @@ class _PersonalHomeState extends ConsumerState<PersonalHome>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(radarAskProvider, (_, next) {
+      if (next != null) _select(PersonalTab.work);
+    });
+    // 启动即预热当前会话：home 常驻，chatProvider 随连接变化重建，
+    // 用户点进「工作」时 history 往往已经在路上或已到。
+    final prewarm = ref.watch(currentSessionProvider);
+    if (prewarm != null) {
+      ref.watch(chatProvider(prewarm).select((s) => s.loading));
+    }
     ref.listen(currentSessionProvider, (previous, next) {
       if (next != previous) _select(PersonalTab.work);
     });
-    final tabs = _tabs;
+    final radarAvailable = ref.watch(radarAvailableProvider);
+    ref.listen<bool>(radarAvailableProvider, (previous, next) {
+      if (next == previous || next) return;
+      if (_tab == PersonalTab.radar) {
+        _select(PersonalTab.settings);
+      }
+      _visited.remove(PersonalTab.radar);
+    });
+    final tabs = _tabsFor(radarAvailable);
     final body = PopScope(
       canPop: _tab == PersonalTab.work,
       onPopInvokedWithResult: (didPop, _) {
@@ -163,7 +163,7 @@ class _PersonalHomeState extends ConsumerState<PersonalHome>
         body: FadeTransition(
           opacity: _fade,
           child: IndexedStack(
-            index: _index,
+            index: _indexFor(tabs),
             children: [
               for (final tab in tabs)
                 _visited.contains(tab)
@@ -174,13 +174,13 @@ class _PersonalHomeState extends ConsumerState<PersonalHome>
         ),
         bottomNavigationBar: MediaQuery.viewInsetsOf(context).bottom > 0
             ? null
-            : _RadarNavBar(tabs: tabs, index: _index, onSelect: _select),
+            : _RadarNavBar(tabs: tabs, index: _indexFor(tabs), onSelect: _select),
       ),
     );
     return WorkDestination(
       reveal: () => _select(PersonalTab.work),
-      // 雷达关闭时不挂轮询宿主：它每 30 秒会去请求 /events。
-      child: radarFeature.value ? RadarInboxHost(child: body) : body,
+      // 雷达不存在时不挂轮询宿主：它每 30 秒会去请求 /events。
+      child: radarAvailable ? RadarInboxHost(child: body) : body,
     );
   }
 }
@@ -294,73 +294,70 @@ void _openWithSession(
   _open(context, builder(session));
 }
 
-class _AutomationHome extends StatelessWidget {
+class _AutomationHome extends ConsumerWidget {
   const _AutomationHome();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = context.l10n;
-    // const 页面不会因为父级重建而重新 build，这里自己盯住开关。
-    return ValueListenableBuilder<bool>(
-      valueListenable: radarFeature,
-      builder: (context, radarEnabled, _) => _PersonalPage(
-        title: t.radarAutomationTab,
-        hint: t.radarAutomationHint,
-        groups: [
-          // 信息雷达关闭时，服务/运行/收件箱三个入口一起消失。
-          if (radarEnabled)
-            _Group(
-              title: t.radarServerGroup,
-              entries: [
-                _Entry(
-                  icon: AppIcons.automation,
-                  label: t.radarAutomation,
-                  onTap: () => _open(
-                    context,
-                    const RadarManagementPage(section: RadarSection.schedules),
-                  ),
-                ),
-                _Entry(
-                  icon: AppIcons.history,
-                  label: t.radarRuns,
-                  onTap: () => _open(
-                    context,
-                    const RadarManagementPage(section: RadarSection.runs),
-                  ),
-                ),
-                _Entry(
-                  icon: AppIcons.notifications,
-                  label: t.radarInbox,
-                  onTap: () => _open(
-                    context,
-                    const RadarManagementPage(section: RadarSection.events),
-                  ),
-                ),
-              ],
-            ),
+    final radarAvailable = ref.watch(radarAvailableProvider);
+    return _PersonalPage(
+      title: t.radarAutomationTab,
+      hint: t.radarAutomationHint,
+      groups: [
+        // 官方中继没有雷达后端：服务/运行/收件箱三个入口一起消失。
+        if (radarAvailable)
           _Group(
-            title: t.radarHostGroup,
-            leading: const _HostStatusEntry(),
+            title: t.radarServerGroup,
             entries: [
               _Entry(
-                icon: AppIcons.scheduled,
-                label: t.radarHostSchedules,
-                onTap: () => _open(context, const SchedulesPage()),
+                icon: AppIcons.automation,
+                label: t.radarAutomation,
+                onTap: () => _open(
+                  context,
+                  const RadarManagementPage(section: RadarSection.schedules),
+                ),
               ),
               _Entry(
-                icon: AppIcons.team,
-                label: t.botsAgentTeam,
-                onTap: () => _open(context, const TeamPage()),
+                icon: AppIcons.history,
+                label: t.radarRuns,
+                onTap: () => _open(
+                  context,
+                  const RadarManagementPage(section: RadarSection.runs),
+                ),
               ),
               _Entry(
-                icon: AppIcons.bot,
-                label: t.radarExperts,
-                onTap: () => _open(context, const AgentPresetsPage()),
+                icon: AppIcons.notifications,
+                label: t.radarInbox,
+                onTap: () => _open(
+                  context,
+                  const RadarManagementPage(section: RadarSection.events),
+                ),
               ),
             ],
           ),
-        ],
-      ),
+        _Group(
+          title: t.radarHostGroup,
+          leading: const _HostStatusEntry(),
+          entries: [
+            _Entry(
+              icon: AppIcons.scheduled,
+              label: t.radarHostSchedules,
+              onTap: () => _open(context, const SchedulesPage()),
+            ),
+            _Entry(
+              icon: AppIcons.team,
+              label: t.botsAgentTeam,
+              onTap: () => _open(context, const TeamPage()),
+            ),
+            _Entry(
+              icon: AppIcons.bot,
+              label: t.radarExperts,
+              onTap: () => _open(context, const AgentPresetsPage()),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -474,28 +471,26 @@ class _PersonalPage extends StatelessWidget {
 
 /// One quiet line about the server link. It used to be a bordered card holding
 /// a pill, a sentence and a button — three boxes to say one true/false.
-class _ConnectionBanner extends StatefulWidget {
+class _ConnectionBanner extends ConsumerStatefulWidget {
   const _ConnectionBanner();
 
   @override
-  State<_ConnectionBanner> createState() => _ConnectionBannerState();
+  ConsumerState<_ConnectionBanner> createState() => _ConnectionBannerState();
 }
 
-class _ConnectionBannerState extends State<_ConnectionBanner> {
+class _ConnectionBannerState extends ConsumerState<_ConnectionBanner> {
   bool? _connected;
 
   @override
   void initState() {
     super.initState();
     radarConnectionEpoch.addListener(_reload);
-    radarFeature.addListener(_reload);
     _reload();
   }
 
   @override
   void dispose() {
     radarConnectionEpoch.removeListener(_reload);
-    radarFeature.removeListener(_reload);
     super.dispose();
   }
 
@@ -517,8 +512,8 @@ class _ConnectionBannerState extends State<_ConnectionBanner> {
 
   @override
   Widget build(BuildContext context) {
-    // 雷达关闭时这条服务器状态也不该出现（它带着「信息雷达」入口）。
-    if (!radarFeature.value) return const SizedBox.shrink();
+    // 官方中继下这条服务器状态也不该出现（它带着「信息雷达」入口）。
+    if (!ref.watch(radarAvailableProvider)) return const SizedBox.shrink();
     final t = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;

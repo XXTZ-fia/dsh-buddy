@@ -44,7 +44,7 @@ class RadarClient {
   /// The saved origin shown in the UI, or the user's own server before sign-in.
   static Future<String> savedOrigin() async => (await const RadarCredentialStore().read())?.url ?? personalServerOrigin;
 
-  Future<dynamic> request(String path, {Map<String, dynamic>? body, String? method, Map<String, String>? query}) async {
+  Future<dynamic> request(String path, {Object? body, String? method, Map<String, String>? query}) async {
     final bytes = await transfer(
       path,
       method: method ?? (body == null ? 'GET' : 'PUT'),

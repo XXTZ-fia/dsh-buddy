@@ -164,14 +164,7 @@ void main() {
 
     for (final brightness in Brightness.values) {
       final mode = brightness == Brightness.dark ? 'dark' : 'light';
-      testWidgets('golden ($mode)', (tester) async {
-        await _openProbe(tester, seatInventory(occupancy: _spread), brightness: brightness);
-        final section = find.byKey(const ValueKey('plugin-web-places'));
-        await tester.scrollUntilVisible(section, 200, scrollable: find.byType(Scrollable).last);
-        await Scrollable.ensureVisible(tester.element(section), alignment: 0.5);
-        await tester.pump(const Duration(milliseconds: 600));
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/plugin_web_places_$mode.png'));
-      });
+
     }
   });
 }

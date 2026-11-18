@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../common/in_progress_row.dart';
 import '../theme/app_icons.dart';
 import 'radar_client.dart';
 import 'radar_links.dart';
+import 'radar_ask.dart';
 import 'radar_papers_api.dart';
 import 'radar_visuals.dart';
 
@@ -240,6 +242,21 @@ class _PaperRowState extends State<_PaperRow> {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 11, color: p.faint),
                   ),
+                ),
+                IconButton(
+                  tooltip: '问 AI',
+                  visualDensity: VisualDensity.compact,
+                  constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+                  padding: EdgeInsets.zero,
+                  onPressed: () => ProviderScope.containerOf(context, listen: false)
+                      .read(radarAskProvider.notifier)
+                      .ask(radarAskPrompt(
+                        platform: paper.source == 'hf' ? 'huggingface' : 'arxiv',
+                        title: paper.displayTitle,
+                        url: paper.url,
+                        summary: paper.abstract.length > 240 ? paper.abstract.substring(0, 240) : paper.abstract,
+                      )),
+                  icon: Icon(AppIcons.askAi, size: 15, color: p.accent),
                 ),
                 if (paper.matched.isNotEmpty)
                   Container(

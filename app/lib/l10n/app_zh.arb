@@ -2902,6 +2902,20 @@
     }
   },
   "viewCachedTranscript": "上次的记录 · 正在后台同步",
+  "chatUsageLine": "本对话 缓存命中 {cache} · 输入 {input} · 输出 {output}",
+  "@chatUsageLine": {
+    "placeholders": {
+      "cache": {
+        "type": "String"
+      },
+      "input": {
+        "type": "String"
+      },
+      "output": {
+        "type": "String"
+      }
+    }
+  },
   "commonCancel": "取消",
   "commonRetry": "重试",
   "commonClose": "关闭",
@@ -8446,20 +8460,18 @@
   "radarUnfollow": "取消关注",
   "radarHotTab": "热榜",
   "radarDigestTab": "概览",
-  "radarFeatureGroup": "可选功能",
-  "radarFeatureSwitch": "信息雷达",
-  "radarFeatureOff": "默认关闭。开启后才会出现雷达页签、调度与收件箱入口。",
-  "radarFeatureOn": "已开启。雷达需要一个你自己部署的服务器，雷达页里有自建教程。",
-  "radarSelfHostGuide": "没有服务器？看自建教程",
-  "radarSelfHostTitle": "自建雷达服务器",
-  "radarSelfHostIntro": "信息雷达不在云端：App 只连你填的地址，内容留在你的服务器上。",
-  "radarSelfHostStep1": "1. 部署后端",
-  "radarSelfHostStep1Body": "在 Ubuntu 22.04+/24.04 上，从仓库根目录执行：\n\nsudo radar/scripts/install-server.sh\n\n脚本会创建系统服务、安装 Chromium、生成访问令牌，并在 127.0.0.1:8787 启动 API 与采集进程。",
-  "radarSelfHostStep2": "2. 配 HTTPS",
-  "radarSelfHostStep2Body": "用 Caddy 反代到 8787。证书必须签给域名：\n\nradar.example.com {\n    reverse_proxy 127.0.0.1:8787\n}\n\nApp 里填域名，不要填 IP。",
-  "radarSelfHostStep3": "3. 取令牌并连接",
-  "radarSelfHostStep3Body": "读取令牌：\n\nsudo grep RADAR_BEARER_TOKEN /etc/personal-assistant/radar.env\n\n把它粘到雷达页的「访问令牌」，地址填你的域名。",
-  "radarSelfHostDocs": "完整说明见仓库内 docs/RADAR_SELF_HOST.md",
+  "radarFeatureGroup": "信息雷达",
+  "radarFeatureOn": "已启用：雷达运行在你自己的服务器上。",
+  "radarSelfHostGuide": "没有服务器？一键配置你自己的服务器",
+  "radarSelfHostTitle": "配置公网服务器",
+  "radarSelfHostIntro": "雷达不在云端。把本仓库放到你的公网服务器上，执行一条命令，中继与雷达会一起装好。",
+  "radarSelfHostStep1": "1. 准备服务器",
+  "radarSelfHostStep1Body": "Ubuntu 22.04+/24.04，两个域名已解析到这台机器，并以 root 身份把仓库放到服务器上。",
+  "radarSelfHostStep2": "2. 一键安装",
+  "radarSelfHostStep2Body": "在仓库根目录执行：\n\nsudo tool/server/install-all.sh \\\n  --relay-host dsh.example.com \\\n  --radar-host radar.example.com \\\n  --email you@example.com\n\n脚本会安装中继、雷达、systemd 服务与 HTTPS，并打印登录账号和访问令牌。",
+  "radarSelfHostStep3": "3. 在 App 里连接",
+  "radarSelfHostStep3Body": "「我的 → 连接 → 自建服务器」填中继地址与邮箱密码；雷达页填同一台服务器的地址和脚本打印的令牌。",
+  "radarSelfHostDocs": "脚本说明与排错：docs/SELF_HOST.md",
   "radarBriefTab": "简报",
   "radarBriefUnit": "条简报",
   "radarBriefUnread": "未读 {count}",
@@ -8591,6 +8603,19 @@
   "radarSourcesOrderTitle": "榜单顺序",
   "radarSourcesOrderNote": "长按拖动，决定「全部来源」里各榜单的先后。",
   "radarSourcesNoneAdded": "还没有添加任何榜单，先在下面星标几个。",
+  "radarZhihuLoginTitle": "登录知乎",
+  "radarZhihuLoginHint": "登录后，登录 Cookie 会保存在你自己的服务器上，用来读取知乎热榜。",
+  "radarZhihuLoginBody": "知乎对机房网络要求登录态。在手机里登录一次，之后雷达就能正常抓取知乎热榜；Cookie 只上传到你自己的服务器。",
+  "radarZhihuLater": "以后再说",
+  "radarZhihuLoginAction": "去登录",
+  "radarZhihuCookieFailed": "保存知乎登录状态失败：{error}",
+  "@radarZhihuCookieFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "readListUpdating": "更新中 · 上次结果",
   "readListOffline": "离线 · 上次结果",
   "readListFailed": "未更新 · 上次结果",
@@ -9186,7 +9211,7 @@
   "remoteRelayLoginRequired": "填写服务器地址、邮箱和密码",
   "remoteErrSignIn": "没能登录",
   "remoteSelfHostedServer": "自建服务器",
-  "remoteSelfHostedSignInHelp": "用邮箱和密码登录自己部署的 liguobao/ds-harness-remote",
+  "remoteSelfHostedSignInHelp": "用邮箱和密码登录自己部署的中继（tool/server/install-all.sh 会打印账号）",
   "remoteServerAddress": "服务器地址",
   "remoteEmail": "邮箱",
   "remotePassword": "密码",
@@ -9661,7 +9686,7 @@
   "remoteErrHistoryModeChanged": "主机已不支持精简历史，请切换到其他主机后再连回来，或重启 App，重新加载历史",
   "remoteCompactHistoryHint": "支持的 DSH Remote 主机会精简历史工具详情，实时回复和审批不变。切换主机或重启 App 后生效；旧主机仍传输完整历史。",
   "searchKwRemoteCompactHistory": "精简 简洁 历史 工具 传输 流量 远程 compact slim lite",
-  "remotePersonalServerNotice": "填入你自建中继的地址，用邮箱和密码登录；这个地址连不上时，可以点下方改回官方中继。",
+  "remotePersonalServerNotice": "填入你自建中继的地址，用邮箱和密码登录。连上后雷达页签会自动出现；这个地址连不上时，可以点下方改回官方中继。",
   "remoteUseOfficialRelay": "使用官方中继（回退）",
   "remotePersonalRelayMissing": "这台服务器目前只提供信息雷达服务，未运行岸宝远程中继；请改用官方中继，或在该服务器部署 ds-harness-remote。",
   "remoteLinkDirect": "直连",
@@ -9670,6 +9695,22 @@
   "remoteLinkSetup": "建连",
   "remoteLinkUnknown": "已连接",
   "remoteHostOfflineHint": "这台电脑没在线：在电脑上打开 DSH，或让 remote-host 常驻，就会自动变回在线。",
+  "remoteKeepOnline": "让电脑常驻",
+  "remoteKeepOnlineSetup": "安装常驻主机",
+  "remoteKeepOnlineHint": "关闭 DSH 窗口后，手机仍能连上这台电脑。",
+  "remoteKeepOnlineIntro": "远程插件跑在 DSH 进程里，关掉窗口就下线。下面这段命令让它在后台常驻并在登录时自动启动，不需要一直开着 DSH。",
+  "remoteKeepOnlineStep1": "1. 在电脑上打开命令行",
+  "remoteKeepOnlineStep1Body": "不需要管理员权限；电脑上已安装 dsh 并登录过中继即可。",
+  "remoteKeepOnlineStep2": "2. 粘贴并运行整段命令",
+  "remoteKeepOnlineStep2Body": "第一次会把插件装进常驻 profile，约 1 分钟。装好后浏览器会自动打开配对页：点左侧 Remote → DSH Go 扫码 → 生成配对二维码，再用手机扫。没弹出就把窗口里的 127.0.0.1 地址复制到浏览器。",
+  "remoteKeepOnlineStep3": "3. 回到这里点检测",
+  "remoteKeepOnlineStep3Body": "出现同一台电脑的新主机条目后切换过去；旧条目会在关闭 DSH 后消失。",
+  "remoteKeepOnlineCopy": "复制命令",
+  "remoteKeepOnlineCheck": "检测常驻主机",
+  "remoteKeepOnlineChecking": "正在刷新主机列表…",
+  "remoteKeepOnlineFound": "检测到新的主机",
+  "remoteKeepOnlineNone": "还没检测到。确认命令已跑完、电脑联网后重试。",
+  "remoteKeepOnlineSwitch": "切换到该主机",
   "remotePairEntry": "扫码配对电脑",
   "remotePairEntryHint": "扫电脑上 Remote 插件显示的二维码，不用注册 Remote 账号；不登录 DeepSeek 也能配对",
   "remotePairAddComputer": "扫码添加电脑",

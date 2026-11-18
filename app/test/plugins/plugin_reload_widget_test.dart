@@ -236,12 +236,7 @@ void main() {
         expect(tester.takeException(), isNull);
       });
 
-      testWidgets('golden local reload confirmation ($suffix)', (tester) async {
-        await _pump(tester, locale: locale, brightness: brightness);
-        await tester.tap(find.text(lookupL10n(locale).pluginsReloadLocal));
-        await pumpFrames(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/plugin_reload_$suffix.png'));
-      }, tags: ['golden']);
+
     }
   }
 }

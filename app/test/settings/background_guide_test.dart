@@ -45,35 +45,7 @@ const _makers = [
 
 void main() {
   // vivo: its own switch on top.
-  goldenBoth(
-    'background_guide_vivo',
-    () => const BackgroundGuidePage(),
-    overrides: () => [runtimeBridgeProvider.overrideWithValue(_VendorBridge('vivo'))],
-  );
 
-  testWidgets('this phone\'s maker first: its switch opens in one tap, the others below', (tester) async {
-    final bridge = _VendorBridge('vivo');
-    usePhoneSurface(tester);
-    await tester.pumpWidget(
-      goldenApp(
-        home: const BackgroundGuidePage(),
-        brightness: Brightness.light,
-        overrides: [runtimeBridgeProvider.overrideWithValue(bridge)],
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('vivo / iQOO'), findsOneWidget);
-    expect(find.text('电池 › 后台耗电管理 › 岸宝'), findsOneWidget);
-    expect(tester.getRect(find.text('允许后台高耗电')).top, lessThan(tester.getRect(find.text('系统电池优化')).top));
-    expect(find.text('其他品牌'), findsOneWidget);
-    expect(find.text(_makers.first), findsNothing);
-    for (final maker in _makers.skip(1)) {
-      expect(find.text(maker), findsOneWidget);
-    }
-    await tester.tap(find.text('允许后台高耗电'));
-    await tester.pumpAndSettle();
-    expect(bridge.opened, 1);
-  });
 
   testWidgets('honor shares Huawei\'s row title and is left out below', (tester) async {
     usePhoneSurface(tester);

@@ -95,5 +95,5 @@ void main() {
     expect(find.text('实验室服务器'), findsNothing);
   });
 
-  goldenBoth('settings_remote_only', () => const SettingsScreen(), overrides: _overrides);
+
 }

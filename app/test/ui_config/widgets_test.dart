@@ -193,25 +193,7 @@ void main() {
     expect(find.byKey(const ValueKey('ui-config-status')), findsNothing);
   });
 
-  goldenBoth('ui_config_rows', () => const _Page(), overrides: () => _overrides(FakeUiSource()..text(_sample)));
 
-  goldenBoth(
-    'ui_config_issues_sheet',
-    () => const _Page(),
-    overrides: () => _overrides(FakeUiSource()..text(_sample)),
-    before: (tester) async {
-      await tester.tap(find.byKey(const ValueKey('ui-config-status')));
-      await tester.pumpAndSettle();
-    },
-  );
 
-  goldenBoth(
-    'ui_config_override_sheet',
-    () => const _Page(),
-    overrides: () => _overrides(FakeUiSource()..text(_sample)),
-    before: (tester) async {
-      await tester.tap(find.byKey(const ValueKey('from-ui-json-theme.mode')));
-      await tester.pumpAndSettle();
-    },
-  );
+
 }

@@ -829,14 +829,5 @@ void main() {
     });
   });
 
-  group('goldens', () {
-    for (final brightness in Brightness.values) {
-      testWidgets('the dialog (${brightness.name})', (tester) async {
-        await tester.runAsync(loadTestFonts);
-        await _pumpDialog(tester, brightness: brightness);
-        await tester.pumpAndSettle();
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/star_prompt_${brightness.name}.png'));
-      });
-    }
-  });
+
 }

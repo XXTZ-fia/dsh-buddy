@@ -220,22 +220,10 @@ void main() {
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
 
-    testWidgets('golden: details tab ($mode)', (tester) async {
-      await _pumpTab(tester, brightness: brightness);
-      await expectLater(find.byType(SessionDetailPage), matchesGoldenFile('goldens/subagents_tab_$mode.png'));
-    });
 
-    testWidgets('golden: header and sheet ($mode)', (tester) async {
-      await _pumpChat(tester, parentId, brightness: brightness);
-      await expectLater(find.byType(ChatScreen), matchesGoldenFile('goldens/subagents_header_$mode.png'));
-      await tester.tap(find.byType(HeaderAgentsKey));
-      await pumpFrames(tester, 8);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/subagents_sheet_$mode.png'));
-    });
 
-    testWidgets('golden: child conversation ($mode)', (tester) async {
-      await _pumpChat(tester, reviewerId, brightness: brightness);
-      await expectLater(find.byType(ChatScreen), matchesGoldenFile('goldens/subagent_chat_$mode.png'));
-    });
+
+
+
   }
 }

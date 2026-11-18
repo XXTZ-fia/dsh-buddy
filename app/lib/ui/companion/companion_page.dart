@@ -60,10 +60,10 @@ import '../theme/app_theme.dart';
 import '../theme/surfaces.dart';
 import 'companion_ask.dart';
 import 'companion_chrome.dart';
+import 'companion_voice_page.dart';
 import 'companion_log.dart';
 import 'companion_memory_page.dart';
 import 'companion_persona_page.dart';
-import 'companion_voice_page.dart';
 import 'companion_stage.dart';
 
 /// The person removed her pack: the one inside the app waits to be asked for.
@@ -3107,7 +3107,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> implements Compan
                     running: _running,
                     busy: _sending,
                     listening: _voice.active,
-                    voiceAvailable: _voice.available,
+                    voiceAvailable: false,
                     onSend: _send,
                     onStop: _stop,
                     onVoice: () {

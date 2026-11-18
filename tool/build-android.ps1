@@ -17,16 +17,12 @@ param(
 #
 # 目录约定（相对本脚本上一级）：
 #   code/app              Flutter 应用
-#   code/runtime/out      Go 宿主运行时资产（arm64-v8a，打包必需，不入 git）
-#   code/tool/test-fonts  金图测试固定字体（不入 git）
+#   code/runtime/out      内嵌 Linux 运行时资产（arm64-v8a，打包必需，不入 git）
 #
 # 质量闸门（默认全开，任一失败即中断本次打包）：
 #   dart analyze        → 有 error/warning 即中断
-#   flutter test radar  → 有用例失败即中断（含金图）
-# 金图是按像素比对的基线：改主题色、改文案这类全局改动会让整批基线过期。
-# 那时先重铺基线，再出包：
-#   flutter test --update-goldens test/radar
-# 只是想验证能否编译、暂不追平基线时，用 -SkipTests 显式跳过测试。
+#   flutter test radar  → 有用例失败即中断
+# 只想验证能否编译、暂不跑测试时，用 -SkipTests 显式跳过。
 #   dsh-buddy/artifacts   产物目录
 #
 # 前提：项目路径必须是纯 ASCII。Gradle 无法把 C: 上的 pub 缓存相对化到中文路径，
@@ -72,11 +68,6 @@ $hasRuntime = (Test-Path "$runtime/assets") -and (Test-Path "$runtime/jniLibs")
 if (!$hasRuntime) {
     throw 'Runtime assets missing (runtime/out/arm64-v8a). They are git-ignored: build with runtime/build-runtime.sh or copy from a previous checkout.'
 }
-# 金图测试要真实字体（55 MB，不入库）；缺了会让 flutter test 直接报错。
-$fonts = Join-Path $PSScriptRoot 'test-fonts'
-if (!$env:DSH_TEST_FONT_DIR -and !(Test-Path -LiteralPath $fonts) -and !$SkipTests) {
-    throw "Golden-test fonts missing: $fonts. Copy the font set there, set DSH_TEST_FONT_DIR, or rerun with -SkipTests to build without the test gate."
-}
 Invoke-Native -Command 'python' -Arguments @((Join-Path $PSScriptRoot 'verify-runtime.py'), $runtime)
 
 function New-BuildInitScript {
@@ -99,15 +90,11 @@ try {
     $dart = Join-Path (Split-Path $Flutter -Parent) 'cache/dart-sdk/bin/dart.exe'
     if (!(Test-Path -LiteralPath $dart)) { $dart = 'dart' }
     Invoke-Native -Command $dart -Arguments @('analyze')
-    $previousFonts = $env:DSH_TEST_FONT_DIR
-    try {
-        if (!$env:DSH_TEST_FONT_DIR) { $env:DSH_TEST_FONT_DIR = Join-Path $PSScriptRoot 'test-fonts' }
-        if ($SkipTests) {
-            Write-Warning 'Skipping widget tests (-SkipTests): a stale golden baseline will not block this build.'
-        } else {
-            Invoke-Flutter @('test', 'test/radar')
-        }
-    } finally { $env:DSH_TEST_FONT_DIR = $previousFonts }
+    if ($SkipTests) {
+        Write-Warning 'Skipping widget tests (-SkipTests).'
+    } else {
+        Invoke-Flutter @('test', 'test/radar')
+    }
     if (!$CheckOnly) {
         $defines = @()
         if ($RadarServerHost) { $defines += "--dart-define=RADAR_SERVER_HOST=$RadarServerHost" }

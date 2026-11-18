@@ -22,6 +22,7 @@ import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import '../web/web_view_page.dart';
 import 'host_key_dialog.dart';
+import 'keep_online_page.dart';
 import 'host_status.dart';
 import 'link_progress.dart';
 import 'network_details_sheet.dart';
@@ -99,6 +100,19 @@ class RemoteScreen extends ConsumerWidget {
       children: [
         _ActiveCard(active: active),
         _RelaySection(onUse: (h) => _use(context, ref, h)),
+        if (signedIn)
+          SettingsSection(
+            title: l10n.remoteKeepOnline,
+            children: [
+              SettingsTile(
+                icon: AppIcons.computer,
+                tinted: false,
+                title: l10n.remoteKeepOnlineSetup,
+                subtitle: l10n.remoteKeepOnlineHint,
+                onTap: () => push(const KeepOnlinePage()),
+              ),
+            ],
+          ),
         SettingsSection(
           title: l10n.remoteTransferSettings,
           children: [

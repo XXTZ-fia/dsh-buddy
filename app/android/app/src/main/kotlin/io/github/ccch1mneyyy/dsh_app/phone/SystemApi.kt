@@ -93,7 +93,6 @@ sealed interface IntentSpec {
         val location: String?,
         val description: String?,
     ) : IntentSpec
-    data class Dial(val number: String) : IntentSpec
     data class SmsDraft(val number: String?, val text: String) : IntentSpec
     data class Share(val text: String, val app: String?) : IntentSpec
     data class Navigate(val destination: String?, val lat: Double?, val lng: Double?, val mode: String, val map: String?) : IntentSpec
@@ -137,12 +136,6 @@ sealed interface IntentSpec {
                     // l10n:keep agent tool validation
                     if (endMs < begin.ms) return Either.Left("end 早于 begin")
                     Either.Right(Calendar(title, begin.ms, endMs, allDay, a.str("location"), a.str("description")))
-                }
-                "dial" -> {
-                    // l10n:keep agent tool validation
-                    val n = a.str("number") ?: return Either.Left("dial 需要 number")
-                    // l10n:keep agent tool validation
-                    phoneNumber(n)?.let { Either.Right(Dial(it)) } ?: Either.Left("号码只能含数字、+、-、空格和括号（不支持 * 和 # 这类服务码）")
                 }
                 "sms_draft" -> {
                     // l10n:keep agent tool validation

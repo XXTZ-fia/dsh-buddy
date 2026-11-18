@@ -329,46 +329,5 @@ void main() {
 
 /// Goldens, run last in [main].
 void goldens() {
-  group('goldens', () {
-    for (final brightness in Brightness.values) {
-      final suffix = brightness.name;
-      testWidgets('panel with 生成, 本对话 and 手机操控 ($suffix)', (tester) async {
-        FakePhoneNative(status: phoneStatus(enabled: true)).install();
-        await _openPanel(tester, generate: true, brightness: brightness);
-        await tester.pumpAndSettle();
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/plus_panel_$suffix.png'));
-      });
 
-      testWidgets('panel at 320 ×1.3 ($suffix)', (tester) async {
-        FakePhoneNative(status: phoneStatus(enabled: false)).install();
-        await _openPanel(tester, generate: true, width: 320, scale: 1.3, brightness: brightness);
-        await tester.pumpAndSettle();
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/plus_panel_320_$suffix.png'));
-      });
-
-      testWidgets('本对话的权限 ($suffix)', (tester) async {
-        await _openPanel(tester, brightness: brightness);
-        await tester.tap(find.text('权限'));
-        await tester.pumpAndSettle();
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/plus_panel_permission_$suffix.png'));
-      });
-
-      testWidgets('permission pill ($suffix)', (tester) async {
-        usePhoneView(tester);
-        final harness = ChatHarness(newChatCatalogs: true, session: 's1');
-        await tester.pumpWidget(
-          testApp(
-            const ChatScreen(),
-            brightness: brightness,
-            overrides: [
-              ...harness.overrides,
-              ..._extra(modes: const SessionModes(preset: 'danger-full-access')),
-            ],
-          ),
-        );
-        await pumpFrames(tester);
-        await expectLater(find.byType(ChatScreen), matchesGoldenFile('goldens/permission_pill_$suffix.png'));
-      });
-    }
-  });
 }

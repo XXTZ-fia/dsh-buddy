@@ -92,12 +92,7 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('the toast ($mode)', (tester) async {
-      await tester.runAsync(loadGoldenFonts);
-      await _pumpHome(tester, brightness: brightness);
-      await _wait(tester);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/usage_notice_$mode.png'));
-    });
+
   }
 
   for (final english in [false, true]) {

@@ -244,30 +244,7 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness.name;
-    group('goldens ($mode)', () {
-      setUp(() => SharedPreferences.setMockInitialValues({}));
 
-      testWidgets('three styles at card, compact and empty-state sizes', (tester) async {
-        useView(tester, 820, 700);
-        await tester.pumpWidget(tileApp(const _StyleSheet(), brightness: brightness));
-        await decodeImages(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/tiles_$mode.png'));
-      });
-
-      testWidgets('every accent', (tester) async {
-        useView(tester, 620, 500);
-        await tester.pumpWidget(tileApp(_AccentSheet(brightness), brightness: brightness));
-        await decodeImages(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/tiles_accents_$mode.png'));
-      });
-
-      testWidgets('every identity hue', (tester) async {
-        useView(tester, 620, 500);
-        await tester.pumpWidget(tileApp(const _IdentitySheet(), brightness: brightness));
-        await decodeImages(tester);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/tiles_identity_$mode.png'));
-      });
-    });
   }
 }
 

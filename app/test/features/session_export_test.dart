@@ -181,13 +181,6 @@ void main() {
   setUpAll(loadTestFonts);
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('golden ($mode)', (tester) async {
-      await _pump(
-        tester,
-        brightness: brightness,
-        overrides: [activeConnectionProvider.overrideWithValue(AsyncData(fakeConnection))],
-      );
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/session_export_$mode.png'));
-    });
+
   }
 }

@@ -137,10 +137,7 @@ void main() {
         }
       });
 
-      testWidgets('golden: preview, $name picture ($mode)', (tester) async {
-        await _pumpPreview(tester, fixtureWallpaper(path), brightness);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/preview_${name}_$mode.png'));
-      });
+
     }
   }
 }

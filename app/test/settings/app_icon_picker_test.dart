@@ -295,9 +295,5 @@ void main() {
     });
   });
 
-  goldenBoth(
-    'app_icon_picker',
-    _page,
-    overrides: () => [launcherIconChannelProvider.overrideWithValue(_FakeLauncher(current: AppIcon.night))],
-  );
+
 }

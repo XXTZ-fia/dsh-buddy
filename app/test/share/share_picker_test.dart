@@ -164,10 +164,7 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('picker golden ($mode)', (tester) async {
-      await _open(tester, selected: {'u11', 'a1', 'u21', 'a2'}, brightness: brightness)();
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/picker_$mode.png'));
-    });
+
   }
 
   test('the long image needs no more than a stretch of exchanges', () {

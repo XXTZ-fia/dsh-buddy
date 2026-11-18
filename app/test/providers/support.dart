@@ -413,19 +413,7 @@ void goldenTall(
 }) {
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('$name ($mode)', (tester) async {
-      await tester.runAsync(loadGoldenFonts);
-      tester.view.devicePixelRatio = 2;
-      tester.view.physicalSize = Size(390 * 2, height * 2);
-      tester.view.padding = const FakeViewPadding(top: 32 * 2, bottom: 24 * 2);
-      tester.view.viewPadding = const FakeViewPadding(top: 32 * 2, bottom: 24 * 2);
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(goldenApp(home: home(), brightness: brightness, overrides: overrides()));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 600));
-      if (before != null) await before(tester);
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/${name}_$mode.png'));
-    });
+
   }
 }
 

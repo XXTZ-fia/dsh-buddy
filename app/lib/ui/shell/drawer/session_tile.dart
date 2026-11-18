@@ -1,6 +1,7 @@
 // The drawer's conversation row and section label.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../../state/session_attention_state.dart';
@@ -90,13 +91,19 @@ class SessionTile extends StatelessWidget {
       checked: selecting ? selected : null,
       label: label,
       button: true,
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
       onLongPress: onLongPress,
       excludeSemantics: true,
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          onTap: onTap,
+          onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
           onLongPress: onLongPress,
           customBorder: shape,
           // Ink (not a container's decoration), so the splash draws over the

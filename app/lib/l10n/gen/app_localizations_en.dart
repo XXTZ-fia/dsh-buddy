@@ -4798,6 +4798,11 @@ class L10nEn extends L10n {
   String get viewCachedTranscript => 'Last conversation · syncing in the background';
 
   @override
+  String chatUsageLine(String cache, String input, String output) {
+    return 'This chat · cache $cache · in $input · out $output';
+  }
+
+  @override
   String get commonCancel => 'Cancel';
 
   @override
@@ -14664,49 +14669,44 @@ class L10nEn extends L10n {
   String get radarDigestTab => 'Overview';
 
   @override
-  String get radarFeatureGroup => 'Optional features';
+  String get radarFeatureGroup => 'Information radar';
 
   @override
-  String get radarFeatureSwitch => 'Information radar';
+  String get radarFeatureOn => 'On. The radar runs on the server you host.';
 
   @override
-  String get radarFeatureOff => 'Off by default. Turning it on adds the radar tab, schedules and inbox.';
+  String get radarSelfHostGuide => 'No server? Set one up with one command';
 
   @override
-  String get radarFeatureOn => 'On. The radar needs a server you host; the radar page has the guide.';
+  String get radarSelfHostTitle => 'Set up your server';
 
   @override
-  String get radarSelfHostGuide => 'No server? Read the self-hosting guide';
+  String get radarSelfHostIntro =>
+      'The radar is not a cloud service. Put this repository on your public server and run one command: the relay and the radar are installed together.';
 
   @override
-  String get radarSelfHostTitle => 'Self-host the radar';
-
-  @override
-  String get radarSelfHostIntro => 'The radar is not a cloud service: the app only talks to the address you enter.';
-
-  @override
-  String get radarSelfHostStep1 => '1. Deploy the backend';
+  String get radarSelfHostStep1 => '1. Prepare the server';
 
   @override
   String get radarSelfHostStep1Body =>
-      'On Ubuntu 22.04+/24.04, from the repository root:/n/nsudo radar/scripts/install-server.sh\n\nThe script creates the service, installs Chromium, generates an access token and starts the API and collector on 127.0.0.1:8787.';
+      'Ubuntu 22.04+/24.04, both domains pointed at the machine, and the repository copied there as root.';
 
   @override
-  String get radarSelfHostStep2 => '2. Put it behind HTTPS';
+  String get radarSelfHostStep2 => '2. Install';
 
   @override
   String get radarSelfHostStep2Body =>
-      'Reverse-proxy 8787 with Caddy. The certificate must be issued for a domain:/n/nradar.example.com {\n    reverse_proxy 127.0.0.1:8787\n}\n\nUse the domain in the app, not the IP.';
+      'From the repository root:\n\nsudo tool/server/install-all.sh \\\n  --relay-host dsh.example.com \\\n  --radar-host radar.example.com \\\n  --email you@example.com\n\nThe script installs the relay, the radar, systemd units and HTTPS, then prints the account and access token.';
 
   @override
-  String get radarSelfHostStep3 => '3. Copy the token and connect';
+  String get radarSelfHostStep3 => '3. Connect the app';
 
   @override
   String get radarSelfHostStep3Body =>
-      'Read the token:/n/nsudo grep RADAR_BEARER_TOKEN /etc/personal-assistant/radar.env\n\nPaste it into Access token on the radar page, with your domain as the address.';
+      'In Remote → Self-hosted server, enter the relay address and the email/password. On the radar page, use the same server address and the token printed by the script.';
 
   @override
-  String get radarSelfHostDocs => 'Full guide: docs/RADAR_SELF_HOST.md (in the repo)';
+  String get radarSelfHostDocs => 'Script and troubleshooting: docs/SELF_HOST.md';
 
   @override
   String get radarBriefTab => 'Brief';
@@ -14955,6 +14955,28 @@ class L10nEn extends L10n {
 
   @override
   String get radarSourcesNoneAdded => 'No boards added yet — star a few below.';
+
+  @override
+  String get radarZhihuLoginTitle => 'Sign in to Zhihu';
+
+  @override
+  String get radarZhihuLoginHint =>
+      'After signing in, the cookie is stored on your own server and used to read the Zhihu hot list.';
+
+  @override
+  String get radarZhihuLoginBody =>
+      'Zhihu requires a signed-in session from datacenter networks. Sign in once on your phone and the radar can read Zhihu again; the cookie goes only to your own server.';
+
+  @override
+  String get radarZhihuLater => 'Later';
+
+  @override
+  String get radarZhihuLoginAction => 'Sign in';
+
+  @override
+  String radarZhihuCookieFailed(String error) {
+    return 'Could not save the Zhihu session: $error';
+  }
 
   @override
   String get readListUpdating => 'Updating · previous results';
@@ -15818,7 +15840,8 @@ class L10nEn extends L10n {
   String get remoteSelfHostedServer => 'Self-hosted server';
 
   @override
-  String get remoteSelfHostedSignInHelp => 'Sign in to your own liguobao/ds-harness-remote with email and password';
+  String get remoteSelfHostedSignInHelp =>
+      'Sign in to the relay you deployed with email and password (tool/server/install-all.sh prints the account)';
 
   @override
   String get remoteServerAddress => 'Server address';
@@ -16570,7 +16593,7 @@ class L10nEn extends L10n {
 
   @override
   String get remotePersonalServerNotice =>
-      'Enter your own relay address and sign in with email and password. Switch back to the official relay below if it is unreachable.';
+      'Enter your own relay address and sign in with email and password. The radar tab appears once you are connected; switch back to the official relay below if this address is unreachable.';
 
   @override
   String get remoteUseOfficialRelay => 'Use official relay (fallback)';
@@ -16597,6 +16620,59 @@ class L10nEn extends L10n {
   @override
   String get remoteHostOfflineHint =>
       'This computer is offline: open DSH on it, or keep the remote-host daemon running, and this row comes back online.';
+
+  @override
+  String get remoteKeepOnline => 'Keep the computer online';
+
+  @override
+  String get remoteKeepOnlineSetup => 'Set up a headless host';
+
+  @override
+  String get remoteKeepOnlineHint => 'The phone can still reach this computer after DSH is closed.';
+
+  @override
+  String get remoteKeepOnlineIntro =>
+      'The Remote plugin lives inside the DSH process, so closing the window takes it offline. This command keeps a headless copy running in the background and starts it at sign-in.';
+
+  @override
+  String get remoteKeepOnlineStep1 => '1. Open a terminal on the computer';
+
+  @override
+  String get remoteKeepOnlineStep1Body =>
+      'No administrator rights needed; dsh must be installed and already signed in to the relay.';
+
+  @override
+  String get remoteKeepOnlineStep2 => '2. Paste and run the whole command';
+
+  @override
+  String get remoteKeepOnlineStep2Body =>
+      'The first run installs the plugin into the headless profile and takes about a minute. The pairing page then opens by itself: click Remote → DSH Go QR → Generate pairing QR and scan it with your phone. If no window opens, paste the 127.0.0.1 address printed in the window into your browser.';
+
+  @override
+  String get remoteKeepOnlineStep3 => '3. Come back and check';
+
+  @override
+  String get remoteKeepOnlineStep3Body =>
+      'When a new host for the same computer appears, switch to it. The old entry disappears after DSH closes.';
+
+  @override
+  String get remoteKeepOnlineCopy => 'Copy command';
+
+  @override
+  String get remoteKeepOnlineCheck => 'Check for the host';
+
+  @override
+  String get remoteKeepOnlineChecking => 'Refreshing hosts…';
+
+  @override
+  String get remoteKeepOnlineFound => 'New host found';
+
+  @override
+  String get remoteKeepOnlineNone =>
+      'Not found yet. Make sure the command finished and the computer is online, then retry.';
+
+  @override
+  String get remoteKeepOnlineSwitch => 'Switch to this host';
 
   @override
   String get remotePairEntry => 'Pair a computer by scanning';

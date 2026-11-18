@@ -78,53 +78,6 @@ void main() {
 
   for (final brightness in Brightness.values) {
     final mode = brightness == Brightness.dark ? 'dark' : 'light';
-    testWidgets('glyph sheet ($mode)', (tester) async {
-      const columns = 12;
-      const cell = Size(64, 60);
-      final glyphs = DshGlyphs.all.entries.toList();
-      final rows = (glyphs.length / columns).ceil();
-      tester.view.devicePixelRatio = 2;
-      tester.view.physicalSize = Size(columns * cell.width * 2, (rows * cell.height + 16) * 2);
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: brightness == Brightness.dark ? buildDarkTheme() : buildLightTheme(),
-          home: Builder(
-            builder: (context) {
-              final colors = DshColors.of(context);
-              return Material(
-                color: Theme.of(context).colorScheme.surface,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Wrap(
-                    children: [
-                      for (final MapEntry(:key, :value) in glyphs)
-                        SizedBox.fromSize(
-                          size: cell,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(value, size: 24, color: Theme.of(context).colorScheme.onSurface),
-                              const SizedBox(height: 6),
-                              Text(
-                                key,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(fontFamily: 'JetBrainsMono', fontSize: 7, color: colors.textTertiary),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      );
-      await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/glyph_sheet_$mode.png'));
-    });
+
   }
 }

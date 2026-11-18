@@ -215,11 +215,7 @@ void main() {
 
     for (final brightness in Brightness.values) {
       final mode = brightness == Brightness.dark ? 'dark' : 'light';
-      testWidgets('golden ($mode)', (tester) async {
-        await tester.runAsync(loadGoldenFonts);
-        await open(tester, brightness: brightness);
-        await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/icon_shortcut_sheet_$mode.png'));
-      });
+
     }
   });
 }

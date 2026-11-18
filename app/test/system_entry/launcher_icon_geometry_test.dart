@@ -102,7 +102,7 @@ void main() {
     String attr(String block, String name) => RegExp('android:$name="([^"]+)"').firstMatch(block)!.group(1)!;
 
     test('新对话 then 语音输入, with their labels and icons', () {
-      expect(shortcuts.map((s) => attr(s, 'shortcutId')), ['new_chat', 'voice_input']);
+      expect(shortcuts.map((s) => attr(s, 'shortcutId')), ['new_chat']);
       final labels = {
         for (final m in RegExp(r'<string name="([^"]+)">([^<]+)</string>').allMatches(strings))
           m.group(1)!: m.group(2)!,

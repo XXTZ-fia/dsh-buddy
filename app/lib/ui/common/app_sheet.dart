@@ -57,7 +57,7 @@ Future<T?> showAppSheet<T>(
   required WidgetBuilder builder,
   double? heightFactor,
   bool isScrollControlled = false,
-  bool glass = true,
+  bool glass = false,
   SheetDismissal? dismissal,
 }) {
   final policy = dismissal ?? (heightFactor == null ? SheetDismissal.drag : SheetDismissal.button);

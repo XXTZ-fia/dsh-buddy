@@ -3,9 +3,8 @@ import 'package:flutter/rendering.dart';
 
 import '../../state/app_info.dart';
 import '../theme/theme.dart';
-import 'brand_glyph.g.dart';
 
-/// 岸宝：App 的品牌图，直接显示新吉祥物图标（assets/brand/anbao.png）。
+/// 岸宝：App 的品牌图，只画人物、不带底板（assets/brand/anbao_person.png）。
 ///
 /// 旧的鱼尾矢量路径（brand_glyph.g.dart）只保留给静态几何量（aspect / 视觉中心），
 /// 不再绘制。旧的 [color] 单色着色参数保留以兼容调用点，图片本身不受影响。
@@ -23,15 +22,13 @@ class BrandMark extends StatelessWidget {
   final bool tile;
 
   /// Width / height of the glyph.
-  static const aspect = BrandGlyph.aspect;
+  /// 人物图的宽高比（裁掉透明边之后约 1.043）。
+  static const aspect = 456 / 437;
 
   /// The glyph's visual centre, the area centroid of its ink, as fractions of its
   /// width and height from the top left. A little below the box's centre: the body
   /// carries the weight.
-  static final visualCentre = Offset(
-    (BrandGlyph.centroid.dx - BrandGlyph.box.left) / BrandGlyph.box.width,
-    (BrandGlyph.centroid.dy - BrandGlyph.box.top) / BrandGlyph.box.height,
-  );
+  static const visualCentre = Offset(0.5, 0.5);
 
   /// How far to move a glyph of height [size] so its visual centre, not its box,
   /// sits on the centre of the space it is centred in.
@@ -48,7 +45,7 @@ class BrandMark extends StatelessWidget {
       label: AppInfo.wordmark,
       image: true,
       child: Image.asset(
-        'assets/brand/anbao.png',
+        'assets/brand/anbao_person.png',
         width: tile ? size : size * aspect,
         height: size,
         fit: BoxFit.contain,

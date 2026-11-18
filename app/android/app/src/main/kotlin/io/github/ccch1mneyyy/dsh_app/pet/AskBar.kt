@@ -156,7 +156,7 @@ internal class AskBarView(context: Context, private val listener: Listener) : Li
             }
         }
     }
-    private val mic = key(R.drawable.ic_pet_mic, AppStrings.get(context, R.string.pet_ask_hold_to_talk))
+    private val mic = key(R.drawable.ic_pet_mic, AppStrings.get(context, R.string.pet_ask_hold_to_talk)).apply { visibility = GONE }
     private val sendKey = key(R.drawable.ic_pet_send, AppStrings.get(context, R.string.pet_ask_send)).apply {
         setOnClickListener { send() }
     }
@@ -185,7 +185,6 @@ internal class AskBarView(context: Context, private val listener: Listener) : Li
         val row = LinearLayout(context).apply { orientation = HORIZONTAL; gravity = Gravity.BOTTOM }
         row.addView(input, LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f))
         val size = context.dp(40f)
-        row.addView(mic, LayoutParams(size, size).apply { marginStart = context.dp(8f) })
         row.addView(sendKey, LayoutParams(size, size).apply { marginStart = context.dp(8f) })
         addView(row, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply { topMargin = context.dp(6f) })
         addView(status, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply { topMargin = context.dp(6f) })
