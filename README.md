@@ -118,6 +118,8 @@ powershell -File tool/build-android.ps1 -RadarServerHost radar.example.com
 
 请用 release 包。同一台机器上实测，冷启动从 debug 的 1.87 秒降到 release 的 0.43 秒，APK 从 295 MB 降到 207 MB。
 
+不想自己构建的话，[Releases](https://github.com/XXTZ-fia/dsh-buddy/releases) 里有一份预构建包。那是调试证书签的，只适合侧载试用，上架要用自己的签名。
+
 ### 4. 连上
 
 打开 App，进信息雷达，填地址、粘令牌。远程会话在「我的 → 连接」里配 SSH 主机或中继账号。
