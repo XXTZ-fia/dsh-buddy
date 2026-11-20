@@ -35,6 +35,9 @@ radar/radar-dryrun/
 # ---- 内嵌运行时产物 ----
 runtime/out/
 
+# ---- 金图测试用的固定字体（55 MB，可从 Windows Fonts 目录重新取）----
+tool/test-fonts/
+
 # ---- 编辑器与系统 ----
 .idea/
 .vscode/
@@ -49,3 +52,7 @@ artifacts/
 # 本地工具目录与测试失败对比图
 .workbuddy/
 **/failures/
+
+# 金图基线（原约 224 MB，已从仓库移除）。需要时本地用
+# `flutter test --update-goldens test/<目录>` 重新生成，不入库。
+app/test/**/goldens/
