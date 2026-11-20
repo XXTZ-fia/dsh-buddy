@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ccch1mneyyy/dsh-buddy/actions/workflows/backend.yml"><img src="https://github.com/ccch1mneyyy/dsh-buddy/actions/workflows/backend.yml/badge.svg" alt="backend CI"></a>
+  <a href="https://github.com/XXTZ-fia/dsh-buddy/actions/workflows/backend.yml"><img src="https://github.com/XXTZ-fia/dsh-buddy/actions/workflows/backend.yml/badge.svg" alt="backend CI"></a>
   <img src="https://img.shields.io/badge/license-AGPL--3.0-2F6FEB" alt="AGPL-3.0">
   <img src="https://img.shields.io/badge/platform-Android%208.0%2B%20%C2%B7%20arm64-3DDC84" alt="Android arm64">
   <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB" alt="Python 3.11+">
@@ -59,7 +59,7 @@ DSH Buddy 是一个安卓客户端。APK 里打包了一份完整的 Ubuntu + No
 ### 1. 先离线跑一遍
 
 ```bash
-git clone https://github.com/ccch1mneyyy/dsh-buddy.git
+git clone https://github.com/XXTZ-fia/dsh-buddy.git
 cd dsh-buddy/radar
 python -m venv .venv && . .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
