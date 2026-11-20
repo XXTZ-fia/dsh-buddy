@@ -12,7 +12,7 @@
 雷达不经过任何第三方：采集只读、数据留在你的服务器上；连官方中继时整套雷达界面
 （页签、自动化入口、后台轮询、通知）都不会出现。
 
-[![backend](https://github.com/ccch1mneyyy/dsh-buddy/actions/workflows/backend.yml/badge.svg)](https://github.com/ccch1mneyyy/dsh-buddy/actions/workflows/backend.yml)
+[![backend](https://github.com/XXTZ-fia/dsh-buddy/actions/workflows/backend.yml/badge.svg)](https://github.com/XXTZ-fia/dsh-buddy/actions/workflows/backend.yml)
 
 ## 界面
 

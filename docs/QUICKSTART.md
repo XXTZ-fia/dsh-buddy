@@ -12,7 +12,7 @@
 
 ## 1. 装 App
 
-从 [Releases](https://github.com/ccch1mneyyy/dsh-buddy/releases/latest) 下载 `app-arm64-release.apk`：
+从 [Releases](https://github.com/XXTZ-fia/dsh-buddy/releases/latest) 下载 `app-arm64-release.apk`：
 
 ```bash
 adb install -r app-arm64-release.apk
