@@ -15851,6 +15851,13 @@ class L10nZh extends L10n {
   String get remoteKeepOnlineSwitch => '切换到该主机';
 
   @override
+  String get remoteKeepOnlineAutoStartTitle => '确认已加入自动启动';
+
+  @override
+  String get remoteKeepOnlineAutoStartBody =>
+      '安装后打开 Windows「任务计划程序」，确认 DSH Remote Host 存在、状态为「就绪」或「正在运行」，触发器为「登录时」。如果电脑上装过旧版，重新运行上面的命令会覆盖成登录自启。';
+
+  @override
   String get remotePairEntry => '扫码配对电脑';
 
   @override

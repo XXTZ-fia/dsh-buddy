@@ -28982,6 +28982,18 @@ abstract class L10n {
   /// **'切换到该主机'**
   String get remoteKeepOnlineSwitch;
 
+  /// No description provided for @remoteKeepOnlineAutoStartTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认已加入自动启动'**
+  String get remoteKeepOnlineAutoStartTitle;
+
+  /// No description provided for @remoteKeepOnlineAutoStartBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'安装后打开 Windows「任务计划程序」，确认 DSH Remote Host 存在、状态为「就绪」或「正在运行」，触发器为「登录时」。如果电脑上装过旧版，重新运行上面的命令会覆盖成登录自启。'**
+  String get remoteKeepOnlineAutoStartBody;
+
   /// No description provided for @remotePairEntry.
   ///
   /// In zh, this message translates to:

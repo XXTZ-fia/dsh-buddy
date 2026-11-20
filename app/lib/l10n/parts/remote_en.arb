@@ -493,5 +493,7 @@
   "remoteKeepOnlineChecking": "Refreshing hosts…",
   "remoteKeepOnlineFound": "New host found",
   "remoteKeepOnlineNone": "Not found yet. Make sure the command finished and the computer is online, then retry.",
-  "remoteKeepOnlineSwitch": "Switch to this host"
+  "remoteKeepOnlineSwitch": "Switch to this host",
+  "remoteKeepOnlineAutoStartTitle": "Confirm auto-start",
+  "remoteKeepOnlineAutoStartBody": "After setup, open Windows Task Scheduler and confirm DSH Remote Host exists, is Ready or Running, and triggers At log on. If an older version was installed before, rerun the command above to replace it with the sign-in trigger."
 }

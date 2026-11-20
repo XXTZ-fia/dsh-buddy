@@ -106,6 +106,9 @@ class _KeepOnlinePageState extends ConsumerState<KeepOnlinePage> {
           ),
           const SizedBox(height: 24),
           _Step(title: t.remoteKeepOnlineStep3, body: t.remoteKeepOnlineStep3Body),
+          const SizedBox(height: 16),
+          _AutoStartNotice(title: t.remoteKeepOnlineAutoStartTitle, body: t.remoteKeepOnlineAutoStartBody),
+          const SizedBox(height: 16),
           Align(
             alignment: Alignment.centerLeft,
             child: FilledButton.icon(
@@ -143,6 +146,44 @@ class _KeepOnlinePageState extends ConsumerState<KeepOnlinePage> {
                 ),
             ],
           ],
+        ],
+      ),
+    );
+  }
+}
+
+class _AutoStartNotice extends StatelessWidget {
+  const _AutoStartNotice({required this.title, required this.body});
+
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = theme.colorScheme.tertiary;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: accent.withValues(alpha: 0.28)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.event_repeat, size: 18, color: accent),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Text(body, style: theme.textTheme.bodySmall?.copyWith(height: 1.55)),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -239,13 +280,17 @@ $run = if ((Test-Path $node) -and (Test-Path $bin)) {
   '& "' + $dsh + '" --profile web --no-open'
 }
 $runner = Join-Path $web 'keep-online.ps1'
-$line = 'while ($true) { ' + $run + ' *>> "' + (Join-Path $log 'headless.log') + '"; Start-Sleep -Seconds 10 }'
+# 先探测 3080：已有 DSH 时不再启动第二份，避免 EADDRINUSE 循环和日志刷屏。
+$line = 'while ($true) { $up = $false; try { $c = New-Object Net.Sockets.TcpClient; $c.Connect(''127.0.0.1'', 3080); $up = $true; $c.Dispose() } catch {}; if (-not $up) { ' + $run + ' *>> "' + (Join-Path $log 'headless.log') + '" }; Start-Sleep -Seconds 10 }'
 Set-Content -Path $runner -Value $line -Encoding utf8
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument ('-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "' + $runner + '"')
 $trigger = New-ScheduledTaskTrigger -AtLogOn
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1) -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances IgnoreNew
 Register-ScheduledTask -TaskName 'DSH Remote Host' -Action $action -Trigger $trigger -Settings $settings -Force | Out-Null
 Start-ScheduledTask -TaskName 'DSH Remote Host'
+Write-Host ''
+Write-Host '已注册登录自启：DSH Remote Host' -ForegroundColor Green
+Write-Host '可在“任务计划程序”确认状态与“登录时”触发器；结束该任务会导致手机远程下线。'
 # 等主机打印出带一次令牌的地址，直接把配对页在默认浏览器里打开。否则普通
 # 用户根本不知道该访问 http://127.0.0.1:3080/?token=... 这个地址。
 $logFile = Join-Path $log 'headless.log'

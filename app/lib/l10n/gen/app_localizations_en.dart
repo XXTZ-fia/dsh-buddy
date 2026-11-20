@@ -16675,6 +16675,13 @@ class L10nEn extends L10n {
   String get remoteKeepOnlineSwitch => 'Switch to this host';
 
   @override
+  String get remoteKeepOnlineAutoStartTitle => 'Confirm auto-start';
+
+  @override
+  String get remoteKeepOnlineAutoStartBody =>
+      'After setup, open Windows Task Scheduler and confirm DSH Remote Host exists, is Ready or Running, and triggers At log on. If an older version was installed before, rerun the command above to replace it with the sign-in trigger.';
+
+  @override
   String get remotePairEntry => 'Pair a computer by scanning';
 
   @override

@@ -9711,6 +9711,8 @@
   "remoteKeepOnlineFound": "检测到新的主机",
   "remoteKeepOnlineNone": "还没检测到。确认命令已跑完、电脑联网后重试。",
   "remoteKeepOnlineSwitch": "切换到该主机",
+  "remoteKeepOnlineAutoStartTitle": "确认已加入自动启动",
+  "remoteKeepOnlineAutoStartBody": "安装后打开 Windows「任务计划程序」，确认 DSH Remote Host 存在、状态为「就绪」或「正在运行」，触发器为「登录时」。如果电脑上装过旧版，重新运行上面的命令会覆盖成登录自启。",
   "remotePairEntry": "扫码配对电脑",
   "remotePairEntryHint": "扫电脑上 Remote 插件显示的二维码，不用注册 Remote 账号；不登录 DeepSeek 也能配对",
   "remotePairAddComputer": "扫码添加电脑",
